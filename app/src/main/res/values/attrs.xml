@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TimerCustomView">
+        <attr name="android:text" />
+        <attr name="android:textColor" />
+        <attr name="timerSize" format="float" />
+    </declare-styleable>
+
+</resources>

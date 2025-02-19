@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TextAppearance.AppCompat.Small.Regular.VVV" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Small.Medium.VVV" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Small.Bold.VVV" parent="TextAppearance.AppCompat.Small">
+        <item name="fontFamily">@font/bold_roboto</item>
+        <item name="android:fontFamily">@font/bold_roboto</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Medium.Regular.VVV" parent="TextAppearance.AppCompat.Medium">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Medium.Medium.VVV" parent="TextAppearance.AppCompat.Medium">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Medium.Bold.VVV" parent="TextAppearance.AppCompat.Medium">
+        <item name="fontFamily">@font/bold_roboto</item>
+        <item name="android:fontFamily">@font/bold_roboto</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Large.Regular.VVV" parent="TextAppearance.AppCompat.Large">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Large.Medium.VVV" parent="TextAppearance.AppCompat.Large">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.Large.Bold.VVV" parent="TextAppearance.AppCompat.Large">
+        <item name="fontFamily">@font/bold_roboto</item>
+        <item name="android:fontFamily">@font/bold_roboto</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.ExtraLarge.Regular.VVV" parent="TextAppearance.AppCompat.Headline">
+        <item name="fontFamily">@font/regular</item>
+        <item name="android:fontFamily">@font/regular</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.ExtraLarge.Medium.VVV" parent="TextAppearance.AppCompat.Headline">
+        <item name="fontFamily">@font/roboto_medium</item>
+        <item name="android:fontFamily">@font/roboto_medium</item>
+    </style>
+
+    <style name="TextAppearance.AppCompat.ExtraLarge.Bold.VVV" parent="TextAppearance.AppCompat.Headline">
+        <item name="fontFamily">@font/bold_roboto</item>
+        <item name="android:fontFamily">@font/bold_roboto</item>
+    </style>
+
+</resources>

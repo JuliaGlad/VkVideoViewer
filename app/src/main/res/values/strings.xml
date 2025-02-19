@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">VkVideoViewer</string>
+    <string name="app_name" translatable="false">VkVideoViewer</string>
+    <string name="views">Views</string>
+    <string name="downloads">Downloads</string>
 </resources>
