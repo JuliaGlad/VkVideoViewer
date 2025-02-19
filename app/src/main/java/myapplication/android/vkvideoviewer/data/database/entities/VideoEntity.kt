@@ -12,6 +12,8 @@ class VideoEntity(
     val videoId: Int,
     val title: String,
     val duration: Int,
+    val views: Int,
+    val downloads: Int,
     val large: VideoQuality,
     val medium: VideoQuality,
     val small: VideoQuality,

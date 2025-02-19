@@ -7,7 +7,10 @@ import javax.inject.Scope
 
 @VideoFragmentScope
 @Component(
-    modules = [VideoFragmentModule::class],
+    modules = [
+        VideoFragmentModule::class,
+        VideoFragmentLocalDIModule::class
+    ],
     dependencies = [AppComponent::class]
 )
 interface VideoFragmentComponent {

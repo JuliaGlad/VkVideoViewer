@@ -11,6 +11,7 @@ import myapplication.android.vkvideoviewer.data.source.VideosRemoteSourceImpl
 
 @Module
 interface VideoFragmentModule {
+
     @Binds
     @VideoFragmentScope
     fun bindVideoRepository(videoRepositoryImpl: VideoRepositoryImpl): VideoRepository

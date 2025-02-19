@@ -19,5 +19,7 @@ fun Video.toDto() =
         id = id,
         title = title,
         duration = duration,
+        views = views,
+        downloads = downloads,
         videos = videos.toDto()
     )

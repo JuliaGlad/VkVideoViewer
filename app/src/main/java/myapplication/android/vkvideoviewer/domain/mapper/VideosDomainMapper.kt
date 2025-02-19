@@ -18,5 +18,8 @@ fun VideoDto.toDomain() =
         id = id,
         title = title,
         duration = duration,
-        thumbnail = videos.medium.thumbnail
+        views = views,
+        downloads = downloads,
+        thumbnail = videos.medium.thumbnail,
+        url = videos.medium.url
     )

@@ -2,4 +2,8 @@
     <string name="app_name" translatable="false">VkVideoViewer</string>
     <string name="views">Views</string>
     <string name="downloads">Downloads</string>
+    <string name="search">Search</string>
+    <string name="something_went_wrong">Looks like something went wrong!</string>
+    <string name="check_connection">Please, check your internet connection and then try again</string>
+    <string name="retry">Retry</string>
 </resources>

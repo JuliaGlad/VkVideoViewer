@@ -1,0 +1,3 @@
+package myapplication.android.vkvideoviewer.presentation.mvi
+
+interface MviEffect

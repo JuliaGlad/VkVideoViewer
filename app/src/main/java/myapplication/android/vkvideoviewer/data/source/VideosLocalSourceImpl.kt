@@ -1,12 +1,14 @@
 package myapplication.android.vkvideoviewer.data.source
 
+import android.util.Log
 import myapplication.android.vkvideoviewer.data.api.models.Video
 import myapplication.android.vkvideoviewer.data.api.models.VideoList
 import myapplication.android.vkvideoviewer.data.database.provider.VideoProvider
 import myapplication.android.vkvideoviewer.data.mapper.toVideo
 import java.util.stream.Collectors
+import javax.inject.Inject
 
-class VideosLocalSourceImpl: VideosLocalSource {
+class VideosLocalSourceImpl @Inject constructor(): VideosLocalSource {
     override fun getVideos(page: Int): VideoList?{
         val data = VideoProvider().getVideos(page)
         return if (data?.isNotEmpty() == true) {

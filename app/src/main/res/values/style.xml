@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <style name="Widget.Material3.Button.VVV" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@null</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/bg_button</item>
+    </style>
+
+    <style name="Widget.Material3.TextInputLayout.OutlinedBox.VVV" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/text_input_layout_background</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxCornerRadiusBottomEnd">20dp</item>
+        <item name="boxCornerRadiusBottomStart">20dp</item>
+        <item name="boxStrokeColor">@color/text_input_layout_background</item>
+        <item name="boxCornerRadiusTopEnd">20dp</item>
+        <item name="boxCornerRadiusTopStart">20dp</item>
+    </style>
+
     <style name="TextAppearance.AppCompat.Small.Regular.VVV" parent="TextAppearance.AppCompat.Small">
         <item name="fontFamily">@font/regular</item>
         <item name="android:fontFamily">@font/regular</item>

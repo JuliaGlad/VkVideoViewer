@@ -9,7 +9,6 @@ android {
     namespace = "myapplication.android.vkvideoviewer"
     compileSdk = 35
 
-
     defaultConfig {
         applicationId = "myapplication.android.vkvideoviewer"
         minSdk = 24
@@ -33,12 +32,22 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
 
 dependencies {
+    implementation ("androidx.fragment:fragment-ktx:1.3.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.tuyenmonkey:mkloader:1.4.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation(libs.dagger.android)
     implementation(libs.dagger.android.support)
     ksp(libs.dagger.android.processor)

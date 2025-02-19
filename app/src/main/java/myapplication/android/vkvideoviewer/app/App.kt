@@ -10,6 +10,7 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
+        app = this
     }
 
     private fun createDatabase() =
@@ -19,6 +20,6 @@ class App: Application() {
 
     companion object {
         internal lateinit var app: App
-            private set
+           private set
     }
 }

@@ -2,4 +2,8 @@
 <resources>
     <string name="views">Просмотра(-ов)</string>
     <string name="downloads">Скачиваний(-я)</string>
+    <string name="search">Поиск</string>
+    <string name="something_went_wrong">Что-то пошло не так!</string>
+    <string name="check_connection">Пожалуйста, проверьте ваше интернет-соединение, и попробуйте снова</string>
+    <string name="retry">Повторить</string>
 </resources>

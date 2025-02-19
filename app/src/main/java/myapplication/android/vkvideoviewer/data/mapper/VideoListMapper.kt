@@ -9,6 +9,8 @@ fun VideoEntity.toVideo() =
         id = id,
         title = title,
         duration = duration,
+        views = views,
+        downloads = downloads,
         videos = VideoQualitiesList(
             large, medium, small, tiny
         )

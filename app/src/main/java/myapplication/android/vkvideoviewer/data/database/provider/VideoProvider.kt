@@ -1,5 +1,6 @@
 package myapplication.android.vkvideoviewer.data.database.provider
 
+import myapplication.android.vkvideoviewer.app.App
 import myapplication.android.vkvideoviewer.app.App.Companion.app
 import myapplication.android.vkvideoviewer.data.api.models.VideoList
 import myapplication.android.vkvideoviewer.data.database.entities.VideoEntity
@@ -61,6 +62,8 @@ class VideoProvider {
                       page = page,
                       title = title,
                       duration = duration,
+                      views = views,
+                      downloads = downloads,
                       large = videos.large,
                       medium = videos.medium,
                       small = videos.small,
