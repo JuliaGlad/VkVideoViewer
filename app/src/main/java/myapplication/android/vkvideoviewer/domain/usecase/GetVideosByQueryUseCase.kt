@@ -9,5 +9,5 @@ class GetVideosByQueryUseCase @Inject constructor(
     private val videoRepository: VideoRepository
 ){
     suspend fun invoke(query: String, page: Int): VideosDomainList =
-        videoRepository.getVideosByQuery(query, page).toDomain()
+        videoRepository.getVideosByQuery(query, page).toDomain(query)
 }

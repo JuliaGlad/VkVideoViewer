@@ -13,6 +13,14 @@ fun VideoDtoList.toDomain() =
             .collect(Collectors.toList())
     )
 
+fun VideoDtoList.toDomain(query: String) =
+    VideosDomainList(
+        items.stream()
+            .filter { it.title.lowercase().contains(query.lowercase()) }
+            .map { it.toDomain() }
+            .collect(Collectors.toList())
+    )
+
 fun VideoDto.toDomain() =
     VideoDomainModel(
         id = id,

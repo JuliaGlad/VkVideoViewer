@@ -1,5 +1,6 @@
 package myapplication.android.vkvideoviewer.presentation.video
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,7 +8,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.core.view.isEmpty
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,6 +31,7 @@ import myapplication.android.vkvideoviewer.presentation.video.recycler_view.Vide
 import myapplication.android.vkvideoviewer.presentation.video.recycler_view.VideoItemModel
 import javax.inject.Inject
 
+@SuppressLint("NotifyDataSetChanged")
 class VideoFragment : MviBaseFragment<
         VideoPartialState,
         VideoIntent,
@@ -68,15 +69,13 @@ class VideoFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (savedInstanceState == null) {
-            store.sendIntent(VideoIntent.Init)
-        }
         store.sendIntent(VideoIntent.GetVideos)
     }
 
     override fun resolveEffect(effect: VideoEffect) {
         when (effect) {
             is VideoEffect.OpenVideoActivity -> TODO()
+            is VideoEffect.OpenDownloadingMenu -> TODO()
         }
     }
 
@@ -91,12 +90,13 @@ class VideoFragment : MviBaseFragment<
                         addRefreshListener()
                         addSearchListener()
                         addScrollToEndListener()
-                    } else if (binding.swipeRefreshLayout.isRefreshing){
+                    } else if (binding.swipeRefreshLayout.isRefreshing) {
                         clearAndUpdateRecycler(state.ui.data.items)
                     } else {
                         updateRecycler(state.ui.data.items)
                     }
                 }
+
                 is LceState.Error -> {
                     Log.e("Error Video", state.ui.throwable.message.toString())
                     setLayoutsVisibility(GONE, VISIBLE)
@@ -125,6 +125,7 @@ class VideoFragment : MviBaseFragment<
     }
 
     private fun updateRecycler(items: List<VideoUiModel>) {
+        Log.i("Update recycler items", items.size.toString())
         val newItems = getRecyclerItemsModels(items)
         val startPosition = recyclerItems.size
         recyclerItems.addAll(newItems)
@@ -164,9 +165,14 @@ class VideoFragment : MviBaseFragment<
     }
 
     private fun addSearchListener() {
-        binding.searchEditText.addTextChangedListener(afterTextChanged = {
-
-        })
+        binding.searchEditText.addTextChangedListener {
+            val query = binding.searchEditText.text.toString()
+            store.sendIntent(VideoIntent.Init)
+            recyclerItems.clear()
+            adapter.notifyDataSetChanged()
+            if (query.isNotEmpty())store.sendIntent(VideoIntent.GetVideosByQuery(query))
+            else store.sendIntent(VideoIntent.GetVideos)
+        }
     }
 
     private fun initRecycler(items: List<VideoUiModel>) {

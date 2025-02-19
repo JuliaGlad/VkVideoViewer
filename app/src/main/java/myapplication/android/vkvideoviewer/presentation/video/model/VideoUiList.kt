@@ -10,5 +10,6 @@ class VideoUiModel(
     val duration: Int,
     val views: Int,
     val downloads: Int,
+    val url: String,
     val thumbnail: String,
 )

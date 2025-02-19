@@ -9,7 +9,4 @@ class VideosRemoteSourceImpl @Inject constructor(
 ): VideosRemoteSource {
     override suspend fun getVideos(page: Int): VideoList =
         api.getVideos(page)
-
-    override suspend fun getVideosByQuery(query: String, page: Int): VideoList =
-        api.getVideosByQuery(query, page)
 }

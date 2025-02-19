@@ -11,5 +11,5 @@ sealed interface VideoEffect: MviEffect {
         val downloads: Int
     ): VideoEffect
 
-    data object OpenDownloadingMenu
+    data class OpenDownloadingMenu(val url: String): VideoEffect
 }

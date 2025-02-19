@@ -20,5 +20,6 @@ fun VideoDomainModel.toUi() =
         duration = duration,
         views = views,
         downloads = downloads,
+        url = url,
         thumbnail = thumbnail
     )

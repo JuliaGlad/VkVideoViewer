@@ -8,8 +8,4 @@ interface VideoApi {
 
     @GET("videos?safesearch=true")
     suspend fun getVideos(@Query("page") page: Int): VideoList
-
-    @GET("videos?safesearch=true")
-    suspend fun getVideosByQuery(@Query("q") query: String, @Query("page") page: Int): VideoList
-
 }

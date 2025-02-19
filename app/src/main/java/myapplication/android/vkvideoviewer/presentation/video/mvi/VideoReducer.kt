@@ -14,13 +14,11 @@ class VideoReducer: MviReducer<
         when(partialState){
             is VideoPartialState.DataLoaded -> updateDataLoaded(prevState, partialState.ui)
             is VideoPartialState.Error -> updateError(prevState, partialState.throwable)
-            VideoPartialState.Init -> updateInit()
+            VideoPartialState.Init -> updateInit(prevState)
             VideoPartialState.Loading -> updateLoading(prevState)
         }
 
-    private fun updateInit() = VideoState(
-        ui = LceState.Loading, page = 0
-    )
+    private fun updateInit(prevState: VideoState) = prevState.copy(page = 0)
 
     private fun updateDataLoaded(prevState: VideoState, data: VideoUiList) =
         prevState.copy(ui = LceState.Content(data), page = prevState.page + 1)

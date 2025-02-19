@@ -24,9 +24,6 @@ class VideoRepositoryImpl @Inject constructor(
             localSource.insertVideos(page, remote)
             remote
         }.toDto()
-//        return withContext(Dispatchers.IO){
-//            remoteSource.getVideos(page)
-//        }.toDto()
     }
 
     override suspend fun getVideosByQuery(query: String, page: Int): VideoDtoList {
@@ -34,7 +31,7 @@ class VideoRepositoryImpl @Inject constructor(
         return if (local != null) local
         else {
             val remote = withContext(Dispatchers.IO){
-                remoteSource.getVideosByQuery(query, page)
+                remoteSource.getVideos(page)
             }
             localSource.deleteSeveralVideos(remote.items.size)
             localSource.insertVideos(page, remote)
