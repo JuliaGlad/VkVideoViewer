@@ -1,5 +1,6 @@
 package myapplication.android.vkvideoviewer.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import myapplication.android.vkvideoviewer.data.mapper.toDto
@@ -39,6 +40,15 @@ class VideoRepositoryImpl @Inject constructor(
         }.toDto()
     }
 
-    override fun getVideoQuality(id: Int): VideoQualitiesDtoList =
-        localSource.getVideo(id)?.videos?.toDto()!!
+    override suspend fun getVideoQuality(page: Int, id: Int): VideoQualitiesDtoList {
+        val local = localSource.getVideo(id)
+        return if (local != null) local.videos
+        else {
+            val remote = withContext(Dispatchers.IO){
+                remoteSource.getVideosById(id)
+            }
+            localSource.insertVideo(page, remote)
+            remote.videos
+        }.toDto()
+    }
 }

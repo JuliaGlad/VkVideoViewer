@@ -17,10 +17,11 @@ import myapplication.android.vkvideoviewer.di.DaggerAppComponent
 import myapplication.android.vkvideoviewer.di.component.fragment.video.DaggerVideoFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.listener.ClickListener
 import myapplication.android.vkvideoviewer.presentation.listener.LinearPaginationScrollListener
+import myapplication.android.vkvideoviewer.presentation.main.MainActivity
 import myapplication.android.vkvideoviewer.presentation.mvi.LceState
 import myapplication.android.vkvideoviewer.presentation.mvi.MviBaseFragment
 import myapplication.android.vkvideoviewer.presentation.mvi.MviStore
-import myapplication.android.vkvideoviewer.presentation.video.model.VideoUiModel
+import myapplication.android.vkvideoviewer.presentation.model.VideoUiModel
 import myapplication.android.vkvideoviewer.presentation.video.mvi.VideoEffect
 import myapplication.android.vkvideoviewer.presentation.video.mvi.VideoIntent
 import myapplication.android.vkvideoviewer.presentation.video.mvi.VideoLocalDI
@@ -74,7 +75,17 @@ class VideoFragment : MviBaseFragment<
 
     override fun resolveEffect(effect: VideoEffect) {
         when (effect) {
-            is VideoEffect.OpenVideoActivity -> TODO()
+            is VideoEffect.OpenVideoActivity ->{
+                with(effect) {
+                    (activity as MainActivity).openPlayerActivity(
+                        videoId = videoId,
+                        videoPage = page,
+                        title = title,
+                        views = views,
+                        downloads = downloads
+                    )
+                }
+            }
             is VideoEffect.OpenDownloadingMenu -> TODO()
         }
     }
@@ -86,14 +97,14 @@ class VideoFragment : MviBaseFragment<
                     if (!needUpdate) {
                         setLayoutsVisibility(GONE, GONE)
                         errorLayout.buttonLoader.visibility = GONE
-                        initRecycler(state.ui.data.items)
+                        initRecycler(state.ui.data.items, state.page)
                         addRefreshListener()
                         addSearchListener()
                         addScrollToEndListener()
                     } else if (binding.swipeRefreshLayout.isRefreshing) {
-                        clearAndUpdateRecycler(state.ui.data.items)
+                        clearAndUpdateRecycler(state.ui.data.items, state.page)
                     } else {
-                        updateRecycler(state.ui.data.items)
+                        updateRecycler(state.ui.data.items, state.page)
                     }
                 }
 
@@ -114,9 +125,9 @@ class VideoFragment : MviBaseFragment<
         }
     }
 
-    private fun clearAndUpdateRecycler(items: List<VideoUiModel>) {
+    private fun clearAndUpdateRecycler(items: List<VideoUiModel>, page: Int) {
         recyclerItems.clear()
-        val newItems = getRecyclerItemsModels(items)
+        val newItems = getRecyclerItemsModels(items, page)
         recyclerItems.addAll(newItems)
         adapter.notifyDataSetChanged()
         binding.swipeRefreshLayout.isRefreshing = false
@@ -124,9 +135,8 @@ class VideoFragment : MviBaseFragment<
         loading = false
     }
 
-    private fun updateRecycler(items: List<VideoUiModel>) {
-        Log.i("Update recycler items", items.size.toString())
-        val newItems = getRecyclerItemsModels(items)
+    private fun updateRecycler(items: List<VideoUiModel>, page: Int) {
+        val newItems = getRecyclerItemsModels(items, page)
         val startPosition = recyclerItems.size
         recyclerItems.addAll(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
@@ -175,14 +185,14 @@ class VideoFragment : MviBaseFragment<
         }
     }
 
-    private fun initRecycler(items: List<VideoUiModel>) {
-        val newItems = getRecyclerItemsModels(items)
+    private fun initRecycler(items: List<VideoUiModel>, page: Int) {
+        val newItems = getRecyclerItemsModels(items, page)
         binding.recyclerView.adapter = adapter
         recyclerItems.addAll(newItems)
         adapter.submitList(recyclerItems)
     }
 
-    private fun getRecyclerItemsModels(items: List<VideoUiModel>): List<VideoItemModel> {
+    private fun getRecyclerItemsModels(items: List<VideoUiModel>, page: Int): List<VideoItemModel> {
         val newItems = mutableListOf<VideoItemModel>()
         items.forEachIndexed { index, videoUiModel ->
             with(videoUiModel) {
@@ -200,9 +210,10 @@ class VideoFragment : MviBaseFragment<
                                 store.sendEffect(
                                     VideoEffect.OpenVideoActivity(
                                         videoId = videoUiModel.id,
-                                        title,
-                                        views,
-                                        downloads
+                                        page = page,
+                                        title = title,
+                                        views = views,
+                                        downloads = downloads
                                     )
                                 )
                             }

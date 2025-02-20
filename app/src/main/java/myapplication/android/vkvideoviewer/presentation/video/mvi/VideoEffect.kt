@@ -6,6 +6,7 @@ sealed interface VideoEffect: MviEffect {
 
     data class OpenVideoActivity(
         val videoId: Int,
+        val page: Int,
         val title: String,
         val views: Int,
         val downloads: Int

@@ -9,5 +9,5 @@ interface VideoRepository {
 
     suspend fun getVideosByQuery(query: String, page: Int): VideoDtoList
 
-    fun getVideoQuality(id: Int): VideoQualitiesDtoList
+    suspend fun getVideoQuality(page: Int, id: Int): VideoQualitiesDtoList
 }

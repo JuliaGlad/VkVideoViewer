@@ -1,7 +1,7 @@
 package myapplication.android.vkvideoviewer.data.database.provider
 
-import myapplication.android.vkvideoviewer.app.App
 import myapplication.android.vkvideoviewer.app.App.Companion.app
+import myapplication.android.vkvideoviewer.data.api.models.Video
 import myapplication.android.vkvideoviewer.data.api.models.VideoList
 import myapplication.android.vkvideoviewer.data.database.entities.VideoEntity
 
@@ -21,7 +21,7 @@ class VideoProvider {
         return result
     }
 
-    fun getVideosByQuery(query: String, page: Int): List<VideoEntity>?{
+    fun getVideosByQuery(query: String, page: Int): List<VideoEntity>? {
         val data = app.database.videoDao().getVideos()
         var result: MutableList<VideoEntity>? = mutableListOf()
         if (data.isEmpty()) result = null
@@ -42,48 +42,66 @@ class VideoProvider {
         if (data.isEmpty()) return null
         else {
             for (i in data) {
-                with(i) {
-                    if (videoId == id) {
-                        return i
-                    }
+                if (i.videoId == id) {
+                    return i
                 }
             }
         }
         return null
     }
 
-    fun insertAll(page: Int, videoList: VideoList){
+    fun insertAll(page: Int, videoList: VideoList) {
         val entities = mutableListOf<VideoEntity>()
         for (i in videoList.items) {
             with(i) {
-              entities.add(
-                  VideoEntity(
-                      videoId = id,
-                      page = page,
-                      title = title,
-                      duration = duration,
-                      views = views,
-                      downloads = downloads,
-                      large = videos.large,
-                      medium = videos.medium,
-                      small = videos.small,
-                      tiny = videos.tiny
-                  )
-              )
+                entities.add(
+                    VideoEntity(
+                        videoId = id,
+                        page = page,
+                        title = title,
+                        duration = duration,
+                        views = views,
+                        downloads = downloads,
+                        large = videos.large,
+                        medium = videos.medium,
+                        small = videos.small,
+                        tiny = videos.tiny
+                    )
+                )
             }
         }
         app.database.videoDao().insertAll(entities)
     }
 
-    fun deleteAll(){
+    fun insertVideo(page: Int, video: Video) {
+        with(video) {
+            app.database.videoDao().insertVideo(
+                VideoEntity(
+                    videoId = id,
+                    page = page,
+                    title = title,
+                    duration = duration,
+                    views = views,
+                    downloads = downloads,
+                    large = videos.large,
+                    medium = videos.medium,
+                    small = videos.small,
+                    tiny = videos.tiny
+                )
+            )
+        }
+    }
+
+
+    fun deleteAll() {
         app.database.videoDao().deleteAll()
     }
 
-    fun deleteSeveral(size: Int){
+    fun deleteSeveral(size: Int) {
         val dao = app.database.videoDao()
         val data = dao.getVideos()
-        if (data.size >= 20){
-            for (i in data){
+        if (data.size >= 20) {
+            for (i in data) {
                 if (data.indexOf(i) >= size) break
                 else dao.deleteVideo(i)
             }

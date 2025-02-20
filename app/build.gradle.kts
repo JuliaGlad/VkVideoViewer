@@ -43,11 +43,13 @@ android {
 }
 
 dependencies {
-    implementation ("androidx.fragment:fragment-ktx:1.3.2")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.tuyenmonkey:mkloader:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.0")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation(libs.androidx.fragment.ktx)
+    implementation(libs.androidx.media3.exoplayer.v120)
+    implementation(libs.androidx.media3.ui.v120)
+    implementation(libs.glide)
+    implementation(libs.mkloader)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.dagger.android)
     implementation(libs.dagger.android.support)
     ksp(libs.dagger.android.processor)

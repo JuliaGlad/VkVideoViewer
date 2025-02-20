@@ -2,8 +2,8 @@ package myapplication.android.vkvideoviewer.presentation.video.mapper
 
 import myapplication.android.vkvideoviewer.domain.models.VideoDomainModel
 import myapplication.android.vkvideoviewer.domain.models.VideosDomainList
-import myapplication.android.vkvideoviewer.presentation.video.model.VideoUiModel
-import myapplication.android.vkvideoviewer.presentation.video.model.VideoUiList
+import myapplication.android.vkvideoviewer.presentation.model.VideoUiModel
+import myapplication.android.vkvideoviewer.presentation.model.VideoUiList
 import java.util.stream.Collectors
 
 fun VideosDomainList.toUi() =

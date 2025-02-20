@@ -2,7 +2,7 @@ package myapplication.android.vkvideoviewer.presentation.video.mvi
 
 import myapplication.android.vkvideoviewer.presentation.mvi.LceState
 import myapplication.android.vkvideoviewer.presentation.mvi.MviReducer
-import myapplication.android.vkvideoviewer.presentation.video.model.VideoUiList
+import myapplication.android.vkvideoviewer.presentation.model.VideoUiList
 
 class VideoReducer: MviReducer<
         VideoPartialState,

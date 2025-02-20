@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/custom_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:gravity="center">
+
+        <!-- Кнопка воспроизведения -->
+        <ImageButton
+            android:id="@id/exo_play_pause"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_background"
+            android:src="@drawable/ic_pause" />
+
+        <!-- Кнопка перемотки назад -->
+        <ImageButton
+            android:id="@id/exo_rew"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_background_smaller"
+            android:src="@drawable/ic_skip_back" />
+
+        <!-- Кнопка перемотки вперед -->
+        <ImageButton
+            android:id="@id/exo_ffwd"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_background_smaller"
+            android:src="@drawable/ic_skip_forward" />
+
+        <!-- Кнопка смены качества -->
+        <ImageButton
+            android:id="@+id/exo_quality"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_quality" />
+
+        <!-- Кнопка полноэкранного режима -->
+        <ImageButton
+            android:id="@+id/exo_fullscreen"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/transparent"
+            android:src="@drawable/ic_fullscreen" />
+    </LinearLayout>
+</FrameLayout>

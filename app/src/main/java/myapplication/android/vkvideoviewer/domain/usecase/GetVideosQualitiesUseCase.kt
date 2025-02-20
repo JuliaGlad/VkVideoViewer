@@ -9,6 +9,6 @@ import javax.inject.Inject
 class GetVideosQualitiesUseCase @Inject constructor(
     private val videoRepository: VideoRepository
 ) {
-    fun invoke(id: Int): VideoQualityDomainList =
-        videoRepository.getVideoQuality(id).toDomain()
+    suspend fun invoke(page: Int, id: Int): VideoQualityDomainList =
+        videoRepository.getVideoQuality(page, id).toDomain()
 }

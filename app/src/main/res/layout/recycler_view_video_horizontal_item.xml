@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp">
+
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="165dp"
+        android:layout_height="110dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@tools:sample/backgrounds/scenic" />
+
+    <LinearLayout
+        android:id="@+id/loader"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:background="@color/white"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/thumbnail"
+        app:layout_constraintEnd_toEndOf="@id/thumbnail"
+        app:layout_constraintTop_toTopOf="@id/thumbnail"
+        app:layout_constraintBottom_toBottomOf="@id/thumbnail">
+        <com.tuyenmonkey.mkloader.MKLoader
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:visibility="visible"
+            app:mk_type="TwinFishesSpinner"
+            app:mk_color="@color/main_green"/>
+    </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.AppCompat.Medium.Medium.VVV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:layout_constraintEnd_toStartOf="@id/action_button"
+        app:layout_constraintStart_toEndOf="@id/thumbnail"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Roe deer" />
+
+    <TextView
+        android:id="@+id/views_count"
+        style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/light_grey"
+        app:layout_constraintStart_toEndOf="@id/thumbnail"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:text="4463" />
+
+    <TextView
+        android:id="@+id/views"
+        style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/views"
+        android:textColor="@color/light_grey"
+        app:layout_constraintStart_toEndOf="@id/views_count"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:id="@+id/downloads_count"
+        style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/light_grey"
+        app:layout_constraintStart_toEndOf="@id/thumbnail"
+        app:layout_constraintTop_toBottomOf="@id/views_count"
+        tools:text="12443" />
+
+    <TextView
+        android:id="@+id/downloads"
+        style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/downloads"
+        android:textColor="@color/light_grey"
+        app:layout_constraintStart_toEndOf="@id/downloads_count"
+        app:layout_constraintTop_toBottomOf="@id/views_count" />
+
+    <ImageView
+        android:id="@+id/action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_action"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <myapplication.android.vkvideoviewer.presentation.custom_view.DurationCustomView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/bg_duration"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="5dp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/thumbnail"
+        app:layout_constraintEnd_toEndOf="@id/thumbnail"
+        app:timerSize="12"
+        tools:text="00:12" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

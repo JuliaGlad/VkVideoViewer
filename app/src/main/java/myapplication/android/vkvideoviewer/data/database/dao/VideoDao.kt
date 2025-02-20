@@ -15,6 +15,9 @@ interface VideoDao {
     @Insert
     fun insertAll(videoList: List<VideoEntity>)
 
+    @Insert
+    fun insertVideo(video: VideoEntity)
+
     @Query("DELETE FROM videos")
     fun deleteAll()
 

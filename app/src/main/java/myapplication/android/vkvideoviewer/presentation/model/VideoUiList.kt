@@ -1,4 +1,4 @@
-package myapplication.android.vkvideoviewer.presentation.video.model
+package myapplication.android.vkvideoviewer.presentation.model
 
 class VideoUiList(
     val items: List<VideoUiModel>

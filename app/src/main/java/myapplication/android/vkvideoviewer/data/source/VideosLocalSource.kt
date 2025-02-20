@@ -11,6 +11,8 @@ interface VideosLocalSource {
 
     fun getVideosByQuery(query: String, page: Int): VideoList?
 
+    fun insertVideo(page: Int, video: Video)
+
     fun insertVideos(page: Int, videos: VideoList)
 
     fun deleteSeveralVideos(size: Int)
