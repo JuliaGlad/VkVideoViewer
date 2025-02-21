@@ -6,7 +6,7 @@ import myapplication.android.vkvideoviewer.data.database.entities.VideoEntity
 
 fun VideoEntity.toVideo() =
     Video(
-        id = id,
+        videoId = videoId,
         title = title,
         duration = duration,
         views = views,

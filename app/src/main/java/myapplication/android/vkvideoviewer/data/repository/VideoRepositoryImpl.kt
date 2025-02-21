@@ -16,7 +16,7 @@ class VideoRepositoryImpl @Inject constructor(
 ): VideoRepository {
     override suspend fun getVideos(page: Int): VideoDtoList {
         val local = localSource.getVideos(page)
-        return if (local != null) local
+        val result = if (local != null) local
         else {
             val remote = withContext(Dispatchers.IO){
                 remoteSource.getVideos(page)
@@ -25,6 +25,10 @@ class VideoRepositoryImpl @Inject constructor(
             localSource.insertVideos(page, remote)
             remote
         }.toDto()
+        for (i in result.items){
+            Log.i("Items videos repository id", i.id.toString())
+        }
+        return result
     }
 
     override suspend fun getVideosByQuery(query: String, page: Int): VideoDtoList {

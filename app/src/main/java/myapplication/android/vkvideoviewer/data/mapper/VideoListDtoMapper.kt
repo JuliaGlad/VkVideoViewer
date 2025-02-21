@@ -16,7 +16,7 @@ fun VideoList.toDto() =
 
 fun Video.toDto() =
     VideoDto(
-        id = id,
+        id = videoId,
         title = title,
         duration = duration,
         views = views,

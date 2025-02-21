@@ -4,6 +4,8 @@
     <string name="downloads">скачиваний(-я)</string>
     <string name="search">Поиск</string>
     <string name="something_went_wrong">Что-то пошло не так!</string>
-    <string name="check_connection">Пожалуйста, проверьте ваше интернет-соединение, и попробуйте снова</string>
+    <string name="check_connection">Пожалуйста, проверьте ваше интернет соединение и то, что ваш VPN включен</string>
     <string name="retry">Повторить</string>
+    <string name="video_quality">Качество</string>
+    <string name="speed_video">Скорость</string>
 </resources>

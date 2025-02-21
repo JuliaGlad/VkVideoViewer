@@ -4,6 +4,8 @@
     <string name="downloads">Downloads</string>
     <string name="search">Search</string>
     <string name="something_went_wrong">Looks like something went wrong!</string>
-    <string name="check_connection">Please, check your internet connection and then try again</string>
+    <string name="check_connection">Please, check that your VPN is turned ON and your internet connection and then try again</string>
     <string name="retry">Retry</string>
+    <string name="video_quality">Quality</string>
+    <string name="speed_video">Speed</string>
 </resources>

@@ -2,19 +2,26 @@ package myapplication.android.vkvideoviewer.presentation.player
 
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.TimeBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.app.Constants
 import myapplication.android.vkvideoviewer.databinding.FragmentPlayerBinding
+import myapplication.android.vkvideoviewer.databinding.PlayerCustomControllersBinding
 import myapplication.android.vkvideoviewer.di.DaggerAppComponent
 import myapplication.android.vkvideoviewer.di.component.fragment.player.DaggerPlayerFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.listener.ClickListener
@@ -32,7 +39,11 @@ import myapplication.android.vkvideoviewer.presentation.player.mvi.PlayerState
 import myapplication.android.vkvideoviewer.presentation.player.mvi.PlayerStoreFactory
 import myapplication.android.vkvideoviewer.presentation.player.recycler_view.VideoHorizontalItemAdapter
 import myapplication.android.vkvideoviewer.presentation.player.recycler_view.VideoHorizontalItemModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
+
 
 class PlayerFragment : MviBaseFragment<
         PlayerPartialState,
@@ -45,6 +56,9 @@ class PlayerFragment : MviBaseFragment<
 
     private lateinit var player: ExoPlayer
     private val args: PlayerArguments by lazy { getIntentArguments() }
+
+    private var _customControllerBinding: PlayerCustomControllersBinding? = null
+    private val customControllerBinding get() = _customControllerBinding!!
 
     private fun getIntentArguments(): PlayerArguments {
         var arguments: PlayerArguments
@@ -63,8 +77,10 @@ class PlayerFragment : MviBaseFragment<
     private val adapter = VideoHorizontalItemAdapter()
     private val recyclerItems: MutableList<VideoHorizontalItemModel> = mutableListOf()
     private var _binding: FragmentPlayerBinding? = null
+    private val handler = Handler(Looper.getMainLooper())
     private var loading = false
     private var needUpdate = false
+    private var isFullscreen = false
     private val binding: FragmentPlayerBinding
         get() = _binding!!
 
@@ -89,14 +105,19 @@ class PlayerFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _customControllerBinding = PlayerCustomControllersBinding
+            .bind(binding.playerView.findViewById(R.id.player_controls))
         store.sendIntent(PlayerIntent.GetVideos(args.videoPage, args.videoId))
+
     }
 
     private fun createPlayer() = ExoPlayer.Builder(requireContext()).build()
 
     override fun resolveEffect(effect: PlayerEffect) {
         when (effect) {
-            PlayerEffect.FinishActivity -> TODO()
+            PlayerEffect.FinishActivity -> {
+
+            }
         }
     }
 
@@ -139,6 +160,34 @@ class PlayerFragment : MviBaseFragment<
     private fun initPlayer(url: String) {
         binding.playerView.player = player
         loadVideo(url)
+        initVideoControlsButtons()
+    }
+
+    private fun initVideoControlsButtons() {
+        with(customControllerBinding) {
+            videoTitlePlayer.text = args.title
+            buttonPlayPause
+                .setOnClickListener {
+                    if (player.isPlaying) {
+                        player.pause()
+                        buttonPlayPause.setImageResource(R.drawable.ic_play_arrow)
+                    } else {
+                        player.play()
+                        buttonPlayPause.setImageResource(R.drawable.ic_pause)
+                    }
+                }
+
+            buttonMoveForward.setOnClickListener {
+                player.seekTo(min(player.currentPosition + 10000, player.duration))
+            }
+            buttonMoveBack.setOnClickListener {
+                player.seekTo(max(player.currentPosition - 10000, 0))
+            }
+            buttonFullscreen.setOnClickListener {
+                isFullscreen = !isFullscreen
+            }
+            buttonOptions.setOnClickListener { showOptions(buttonOptions) }
+        }
     }
 
     private fun loadVideo(url: String) {
@@ -146,6 +195,70 @@ class PlayerFragment : MviBaseFragment<
         player.setMediaItem(mediaItem)
         player.prepare()
         player.playWhenReady = true
+        startProgressUpdater()
+        addProgressBarListener()
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun addProgressBarListener() {
+        customControllerBinding.timeBar.addListener(object : TimeBar.OnScrubListener {
+            override fun onScrubStart(timeBar: TimeBar, position: Long) {
+                Log.i("onScrubStart", "Position: $position TimerBar: $timeBar")
+            }
+
+            override fun onScrubMove(timeBar: TimeBar, position: Long) {
+                customControllerBinding.timer.text = formatTime(position)
+            }
+
+            override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
+                if (!canceled) player.seekTo(position)
+            }
+        })
+
+    }
+
+    private fun startProgressUpdater() {
+        with(customControllerBinding) {
+            handler.post(object : Runnable {
+                @OptIn(UnstableApi::class)
+                override fun run() {
+                    val position = player.currentPosition
+                    val duration = player.duration
+                    timer.text = formatTime(position)
+
+                    timeBar.setPosition(position)
+                    timeBar.setDuration(duration)
+
+                    handler.postDelayed(this, 1000)
+                }
+            })
+        }
+    }
+
+    private fun formatTime(time: Long): CharSequence {
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(time)
+        val seconds = (TimeUnit.MILLISECONDS.toSeconds(time) % 60)
+        val minutesStr =
+            if (minutes < 10) "0$minutes"
+            else "$minutes"
+        val secondsStr =
+            if (seconds < 10) "0$seconds"
+            else "$seconds"
+
+        return "$minutesStr : $secondsStr"
+    }
+
+    private fun showOptions(view: View) {
+        val popupMenu = PopupMenu(context, view)
+        popupMenu.menuInflater.inflate(R.menu.video_options_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                R.id.option_quality -> {}
+                R.id.option_speed -> {}
+            }
+            true
+        }
+        popupMenu.show()
     }
 
     private fun updateRecycler(items: List<VideoUiModel>) {
@@ -180,7 +293,7 @@ class PlayerFragment : MviBaseFragment<
                             thumbnail = thumbnail,
                             itemClickListener = object : ClickListener {
                                 override fun onClick() {
-                                    TODO("Change to video")
+
                                 }
                             },
                             actionClickListener = object : ClickListener {
@@ -225,7 +338,9 @@ class PlayerFragment : MviBaseFragment<
 
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
         _binding = null
+        _customControllerBinding = null
     }
 
 }

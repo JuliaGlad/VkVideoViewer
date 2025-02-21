@@ -1,17 +1,21 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:layoutDescription="@xml/fragment_player_scene2">
 
     <androidx.media3.ui.PlayerView
         android:id="@+id/player_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
+        app:controller_layout_id="@layout/player_custom_controllers"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:resize_mode="fit"
+        app:use_controller="true" />
 
     <TextView
         android:id="@+id/video_title"
@@ -20,7 +24,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@id/action_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/player_view"
         tools:text="Morning mountain" />
@@ -44,9 +49,9 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:textColor="@color/light_grey"
-        app:layout_constraintTop_toBottomOf="@id/video_title"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="4463"/>
+        app:layout_constraintTop_toBottomOf="@id/video_title"
+        tools:text="4463" />
 
     <TextView
         android:id="@+id/views_title"
@@ -57,18 +62,18 @@
         android:layout_marginTop="16dp"
         android:text="@string/views"
         android:textColor="@color/light_grey"
-        app:layout_constraintTop_toBottomOf="@id/video_title"
-        app:layout_constraintStart_toEndOf="@id/views_count" />
+        app:layout_constraintStart_toEndOf="@id/views_count"
+        app:layout_constraintTop_toBottomOf="@id/video_title" />
 
     <ImageView
         android:id="@+id/ic_dot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_dot"
         android:layout_marginStart="5dp"
+        android:src="@drawable/ic_dot"
+        app:layout_constraintBottom_toBottomOf="@id/views_title"
         app:layout_constraintStart_toEndOf="@id/views_title"
-        app:layout_constraintTop_toTopOf="@id/views_title"
-        app:layout_constraintBottom_toBottomOf="@id/views_title"/>
+        app:layout_constraintTop_toTopOf="@id/views_title" />
 
     <TextView
         android:id="@+id/downloads_count"
@@ -78,9 +83,9 @@
         android:layout_marginStart="5dp"
         android:layout_marginTop="16dp"
         android:textColor="@color/light_grey"
-        app:layout_constraintTop_toBottomOf="@id/video_title"
         app:layout_constraintStart_toEndOf="@id/ic_dot"
-        tools:text="1462"/>
+        app:layout_constraintTop_toBottomOf="@id/video_title"
+        tools:text="1462" />
 
     <TextView
         android:id="@+id/downloads_title"
@@ -91,8 +96,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/downloads"
         android:textColor="@color/light_grey"
-        app:layout_constraintTop_toBottomOf="@id/video_title"
-        app:layout_constraintStart_toEndOf="@id/downloads_count" />
+        app:layout_constraintStart_toEndOf="@id/downloads_count"
+        app:layout_constraintTop_toBottomOf="@id/video_title" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -100,29 +105,31 @@
         android:layout_height="0dp"
         android:layout_marginTop="22dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/downloads_title"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/downloads_title" />
 
-    <include layout="@layout/loading_layout"
+    <include
         android:id="@+id/loading_layout"
+        layout="@layout/loading_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <include layout="@layout/error_layout"
+    <include
         android:id="@+id/error_layout"
+        layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

@@ -10,7 +10,7 @@ class VideoList(
 
 @Serializable
 class Video(
-    val id: Int,
+    @SerialName("id") val videoId: Int,
     @SerialName("tags") val title: String,
     val duration: Int,
     val views: Int,

@@ -12,6 +12,12 @@
             app:touchAnchorSide="top"
             app:dragDirection="dragDown"
             app:moveWhenScrollAtTop="true"/>
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/player_container"
+                app:framePosition="100"
+                android:scaleY="1.2" />
+        </KeyFrameSet>
 
     </Transition>
 
@@ -27,11 +33,11 @@
         <Constraint
             android:id="@id/player_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toTopOf="parent"
+            android:layout_height="70dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </ConstraintSet>
 
 </MotionScene>
