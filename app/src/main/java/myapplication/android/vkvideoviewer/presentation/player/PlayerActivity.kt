@@ -26,12 +26,6 @@ class PlayerActivity : AppCompatActivity() {
             .inflateTransition(android.R.transition.move)
     }
 
-    fun transition(){
-        binding.root.transitionToEnd()
-        val fragment: Fragment? =
-            supportFragmentManager.fragments[0]
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
