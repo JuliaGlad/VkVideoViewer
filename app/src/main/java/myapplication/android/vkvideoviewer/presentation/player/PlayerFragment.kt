@@ -18,11 +18,12 @@ import android.view.WindowManager
 import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.app.Constants
@@ -104,7 +105,9 @@ class PlayerFragment : MviBaseFragment<
         val appComponent = DaggerAppComponent.factory().create(requireContext())
         DaggerPlayerFragmentComponent.factory().create(appComponent).inject(this)
         super.onCreate(savedInstanceState)
+
         player = ExoPlayer.Builder(requireContext()).build()
+
         requireActivity().window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -119,6 +122,7 @@ class PlayerFragment : MviBaseFragment<
         _binding = FragmentPlayerBinding.inflate(layoutInflater)
         _customControllerBinding = PlayerCustomControllersBinding
             .bind(binding.playerView.findViewById(R.id.player_controls))
+
         return binding.root
     }
 
@@ -182,9 +186,16 @@ class PlayerFragment : MviBaseFragment<
     }
 
     private fun initPlayer() {
+        val userAgent = Util.getUserAgent(requireContext(), activity?.applicationInfo!!.name)
+        val dataSource = DefaultHttpDataSource.Factory().setUserAgent(userAgent)
+        val mediaSource = ProgressiveMediaSource.Factory(dataSource)
+            .createMediaSource(MediaItem.fromUri(videoQualities[currentQuality]!!))
+
         binding.playerView.player = player
         player.setPlaybackSpeed(currentSpeed)
-        loadVideo()
+        player.setMediaSource(mediaSource)
+
+        loadVideo(0)
         initVideoControlsButtons()
     }
 
@@ -202,6 +213,13 @@ class PlayerFragment : MviBaseFragment<
                     }
                 }
 
+            buttonPlayAgain.setOnClickListener {
+                player.seekTo(0)
+                player.playWhenReady = true
+                buttonPlayAgain.visibility = GONE
+                buttonPlayPause.visibility = VISIBLE
+            }
+
             buttonMoveForward.setOnClickListener {
                 player.seekTo(min(player.currentPosition + 10000, player.duration))
             }
@@ -215,21 +233,35 @@ class PlayerFragment : MviBaseFragment<
         }
     }
 
-    private fun loadVideo() {
+    private fun loadVideo(currentPosition: Long) {
         val mediaItem = MediaItem.fromUri(Uri.parse(videoQualities[currentQuality]))
         player.setMediaItem(mediaItem)
         player.prepare()
-        startProgressUpdater()
+        startProgressUpdater(currentPosition)
         player.playWhenReady = true
+        if (currentPosition != 0L) player.seekTo(currentPosition)
         addProgressBarListener()
     }
 
-    private fun addProgressBarListener() {}
+    private fun addProgressBarListener() {
 
-    private fun startProgressUpdater() {
+        player.addListener(object : Player.Listener{
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                if (playbackState == Player.STATE_ENDED){
+                    with(customControllerBinding) {
+                        buttonPlayPause.visibility = GONE
+                        buttonPlayAgain.visibility = VISIBLE
+                    }
+                }
+            }
+        })
+
+    }
+
+    private fun startProgressUpdater(currentPosition: Long) {
         with(customControllerBinding) {
             handler.post(object : Runnable {
-                @OptIn(UnstableApi::class)
                 override fun run() {
                     val position = player.currentPosition
                     val duration = player.duration
@@ -255,7 +287,8 @@ class PlayerFragment : MviBaseFragment<
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 window.insetsController?.apply {
                     hide(WindowInsets.Type.systemBars())
-                    systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                    systemBarsBehavior =
+                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
                 }
             } else {
                 @Suppress("DEPRECATION")
@@ -311,7 +344,7 @@ class PlayerFragment : MviBaseFragment<
                 if (args != null) {
                     val option = args.getString(Constants.OPTIONS)
                     if (option != null) {
-                        when (option){
+                        when (option) {
                             Constants.OPTION_SPEED -> showSpeedDialog()
                             Constants.OPTION_QUALITY -> showQualityDialog()
                         }
@@ -329,9 +362,10 @@ class PlayerFragment : MviBaseFragment<
                 if (args != null) {
                     val quality = args.getString(Constants.QUALITY)
                     if (quality != null) {
-                        if (quality != currentQuality){
+                        if (quality != currentQuality) {
+                            val currentPosition = player.currentPosition
                             currentQuality = quality
-                            loadVideo()
+                            loadVideo(currentPosition)
                         }
                     }
                 }
@@ -346,7 +380,7 @@ class PlayerFragment : MviBaseFragment<
             override fun handleDialogClose(args: Bundle?) {
                 if (args != null) {
                     val speed = args.getFloat(Constants.SPEED)
-                    if (speed != currentSpeed){
+                    if (speed != currentSpeed) {
                         currentSpeed = speed
                         player.setPlaybackSpeed(currentSpeed)
                     }
