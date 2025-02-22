@@ -16,6 +16,7 @@ fun VideoQualitiesList.toDto() =
 fun VideoQuality.toDto() =
     VideoQualityDto(
         url = url,
+        size = size,
         width = width,
         height = height,
         thumbnail = thumbnail

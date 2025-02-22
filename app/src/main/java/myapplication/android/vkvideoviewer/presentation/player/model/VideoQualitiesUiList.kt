@@ -8,5 +8,6 @@ class VideoQualitiesUiList(
 )
 
 class VideoQualityUiModel(
-    val url: String
+    val url: String,
+    val size: Int
 )

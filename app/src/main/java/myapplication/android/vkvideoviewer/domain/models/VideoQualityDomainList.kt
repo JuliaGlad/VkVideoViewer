@@ -9,5 +9,6 @@ class VideoQualityDomainList(
 
 class VideoQualityDomainModel(
     val url: String,
+    val size: Int,
     val thumbnail: String
 )

@@ -16,5 +16,6 @@ fun VideoQualitiesDtoList.toDomain() =
 fun VideoQualityDto.toDomain() =
     VideoQualityDomainModel(
         url = url,
+        size = size,
         thumbnail = thumbnail
     )

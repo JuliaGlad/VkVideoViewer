@@ -15,5 +15,6 @@ fun VideoQualityDomainList.toUi() =
 
 fun VideoQualityDomainModel.toUi() =
     VideoQualityUiModel(
-        url = url
+        url = url,
+        size = size
     )

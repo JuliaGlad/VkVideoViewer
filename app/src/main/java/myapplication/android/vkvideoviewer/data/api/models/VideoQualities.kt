@@ -13,6 +13,7 @@ class VideoQualitiesList(
 @Serializable
 class VideoQuality(
     val url: String,
+    val size: Int,
     val width: Int,
     val height: Int,
     val thumbnail: String

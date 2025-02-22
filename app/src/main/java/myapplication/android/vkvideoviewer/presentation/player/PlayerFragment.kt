@@ -1,6 +1,8 @@
 package myapplication.android.vkvideoviewer.presentation.player
 
+import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,13 +12,15 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import android.widget.PopupMenu
 import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.TimeBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.app.Constants
@@ -57,9 +61,6 @@ class PlayerFragment : MviBaseFragment<
     private lateinit var player: ExoPlayer
     private val args: PlayerArguments by lazy { getIntentArguments() }
 
-    private var _customControllerBinding: PlayerCustomControllersBinding? = null
-    private val customControllerBinding get() = _customControllerBinding!!
-
     private fun getIntentArguments(): PlayerArguments {
         var arguments: PlayerArguments
         with(activity?.intent!!) {
@@ -83,12 +84,18 @@ class PlayerFragment : MviBaseFragment<
     private var isFullscreen = false
     private val binding: FragmentPlayerBinding
         get() = _binding!!
+    private var _customControllerBinding: PlayerCustomControllersBinding? = null
+    private val customControllerBinding get() = _customControllerBinding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = DaggerAppComponent.factory().create(requireContext())
         DaggerPlayerFragmentComponent.factory().create(appComponent).inject(this)
         super.onCreate(savedInstanceState)
         player = createPlayer()
+        requireActivity().window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
     }
 
     override fun onCreateView(
@@ -97,6 +104,8 @@ class PlayerFragment : MviBaseFragment<
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPlayerBinding.inflate(layoutInflater)
+        _customControllerBinding = PlayerCustomControllersBinding
+            .bind(binding.playerView.findViewById(R.id.player_controls))
         return binding.root
     }
 
@@ -105,8 +114,6 @@ class PlayerFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _customControllerBinding = PlayerCustomControllersBinding
-            .bind(binding.playerView.findViewById(R.id.player_controls))
         store.sendIntent(PlayerIntent.GetVideos(args.videoPage, args.videoId))
 
     }
@@ -184,7 +191,7 @@ class PlayerFragment : MviBaseFragment<
                 player.seekTo(max(player.currentPosition - 10000, 0))
             }
             buttonFullscreen.setOnClickListener {
-                isFullscreen = !isFullscreen
+                toggleFullscreen()
             }
             buttonOptions.setOnClickListener { showOptions(buttonOptions) }
         }
@@ -199,23 +206,9 @@ class PlayerFragment : MviBaseFragment<
         addProgressBarListener()
     }
 
-    @OptIn(UnstableApi::class)
     private fun addProgressBarListener() {
-        customControllerBinding.timeBar.addListener(object : TimeBar.OnScrubListener {
-            override fun onScrubStart(timeBar: TimeBar, position: Long) {
-                Log.i("onScrubStart", "Position: $position TimerBar: $timeBar")
-            }
-
-            override fun onScrubMove(timeBar: TimeBar, position: Long) {
-                customControllerBinding.timer.text = formatTime(position)
-            }
-
-            override fun onScrubStop(timeBar: TimeBar, position: Long, canceled: Boolean) {
-                if (!canceled) player.seekTo(position)
-            }
-        })
-
     }
+
 
     private fun startProgressUpdater() {
         with(customControllerBinding) {
@@ -225,12 +218,61 @@ class PlayerFragment : MviBaseFragment<
                     val position = player.currentPosition
                     val duration = player.duration
                     timer.text = formatTime(position)
+
                     timeBar.setPosition(position)
                     timeBar.setDuration(duration)
+
                     handler.postDelayed(this, 1000)
                 }
             })
         }
+    }
+
+
+    private fun toggleFullscreen() {
+        val activity = requireActivity()
+        val window = activity.window
+
+        if (!isFullscreen) {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.apply {
+                    hide(WindowInsets.Type.systemBars())
+                    systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+            } else {
+                @Suppress("DEPRECATION")
+                window.decorView.systemUiVisibility = (
+                        View.SYSTEM_UI_FLAG_FULLSCREEN
+                                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        )
+            }
+            binding.playerView.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+
+        } else {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.show(WindowInsets.Type.systemBars())
+            } else {
+                @Suppress("DEPRECATION")
+                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+            }
+            binding.playerView.layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        }
+
+        isFullscreen = !isFullscreen
     }
 
     private fun formatTime(time: Long): CharSequence {
@@ -338,7 +380,6 @@ class PlayerFragment : MviBaseFragment<
         super.onDestroy()
         handler.removeCallbacksAndMessages(null)
         _binding = null
-        _customControllerBinding = null
     }
 
 }
