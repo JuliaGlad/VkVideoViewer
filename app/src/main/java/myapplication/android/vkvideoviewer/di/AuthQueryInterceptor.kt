@@ -1,4 +1,4 @@
-package myapplication.android.vkvideoviewer.app
+package myapplication.android.vkvideoviewer.di
 
 import myapplication.android.vkvideoviewer.di.RetrofitModule.Companion.API_KEY
 import okhttp3.HttpUrl

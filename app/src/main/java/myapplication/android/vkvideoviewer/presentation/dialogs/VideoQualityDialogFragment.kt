@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import myapplication.android.vkvideoviewer.app.Constants
 import myapplication.android.vkvideoviewer.databinding.DialogUpdateQualityBinding
 import myapplication.android.vkvideoviewer.presentation.listener.DialogDismissedListener
 
@@ -24,15 +23,15 @@ class VideoQualityDialogFragment: DialogFragment() {
 
         with(binding) {
             buttonQualityTiny.setOnClickListener {
-                quality = Constants.TINY_ID
+                quality = TINY_ID
                 dismiss()
             }
             buttonQualityMedium.setOnClickListener {
-                quality = Constants.MEDIUM_ID
+                quality = MEDIUM_ID
                 dismiss()
             }
             buttonQualitySmall.setOnClickListener {
-                quality = Constants.SMALL_ID
+                quality = SMALL_ID
                 dismiss()
             }
         }
@@ -45,11 +44,18 @@ class VideoQualityDialogFragment: DialogFragment() {
         if (quality != null && dialogDismissedListener != null) {
             dialogDismissedListener!!.handleDialogClose(Bundle().apply {
                 putString(
-                    Constants.QUALITY,
+                    QUALITY,
                     quality
                 )
             })
         }
+    }
+
+    companion object{
+        const val TINY_ID = "270р"
+        const val SMALL_ID = "360р"
+        const val MEDIUM_ID = "720р"
+        const val QUALITY = "QualityId"
     }
 
 }

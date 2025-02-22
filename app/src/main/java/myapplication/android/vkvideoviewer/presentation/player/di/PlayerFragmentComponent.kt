@@ -1,5 +1,7 @@
-package myapplication.android.vkvideoviewer.di.component.fragment.player
+package myapplication.android.vkvideoviewer.presentation.player.di
 
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
 import dagger.Component
 import myapplication.android.vkvideoviewer.di.AppComponent
 import myapplication.android.vkvideoviewer.presentation.player.PlayerFragment
@@ -15,6 +17,7 @@ import javax.inject.Scope
 )
 interface PlayerFragmentComponent {
 
+    @OptIn(UnstableApi::class)
     fun inject(playerFragment: PlayerFragment)
 
     @Component.Factory

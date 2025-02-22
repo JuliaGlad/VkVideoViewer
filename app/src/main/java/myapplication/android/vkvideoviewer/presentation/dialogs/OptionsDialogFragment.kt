@@ -5,7 +5,6 @@ import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import myapplication.android.vkvideoviewer.app.Constants
 import myapplication.android.vkvideoviewer.databinding.DialogVideoOptionsBinding
 import myapplication.android.vkvideoviewer.presentation.listener.DialogDismissedListener
 
@@ -24,11 +23,11 @@ class OptionsDialogFragment : DialogFragment() {
 
         with(binding) {
             buttonQuality.setOnClickListener {
-                option = Constants.OPTION_QUALITY
+                option = OPTION_QUALITY
                 dismiss()
             }
             buttonSpeed.setOnClickListener {
-                option = Constants.OPTION_SPEED
+                option = OPTION_SPEED
                 dismiss()
             }
         }
@@ -41,11 +40,17 @@ class OptionsDialogFragment : DialogFragment() {
         if (option != null && dialogDismissedListener != null) {
             dialogDismissedListener!!.handleDialogClose(Bundle().apply {
                 putString(
-                    Constants.OPTIONS,
+                    OPTIONS,
                     option
                 )
             })
         }
+    }
+
+    companion object{
+        const val OPTIONS = "OptionsId"
+        const val OPTION_QUALITY = "OptionQuality"
+        const val OPTION_SPEED = "OptionSpeed"
     }
 
 }

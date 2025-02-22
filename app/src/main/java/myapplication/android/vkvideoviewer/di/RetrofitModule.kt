@@ -4,7 +4,6 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import dagger.Module
 import dagger.Provides
 import kotlinx.serialization.json.Json
-import myapplication.android.vkvideoviewer.app.AuthQueryInterceptor
 import myapplication.android.vkvideoviewer.data.api.VideoApi
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -34,7 +33,7 @@ class RetrofitModule {
             baseUrl(BASE_URL)
             addConverterFactory(
                 jsonSerializer.asConverterFactory(
-                    "application/json; charset=UTF8".toMediaType()
+                    JSON.toMediaType()
                 )
             )
             client(authClient)
@@ -47,6 +46,7 @@ class RetrofitModule {
         retrofit.create(VideoApi::class.java)
 
     companion object {
+        const val JSON = "application/json; charset=UTF8"
         const val API_KEY = "48922348-ae7a5c63d25e998e6012c84db"
         const val BASE_URL = "https://pixabay.com/api/"
     }

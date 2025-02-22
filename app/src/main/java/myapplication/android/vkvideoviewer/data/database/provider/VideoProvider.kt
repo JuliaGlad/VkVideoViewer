@@ -1,7 +1,7 @@
 package myapplication.android.vkvideoviewer.data.database.provider
 
 import android.util.Log
-import myapplication.android.vkvideoviewer.app.App.Companion.app
+import myapplication.android.vkvideoviewer.App.Companion.app
 import myapplication.android.vkvideoviewer.data.api.models.Video
 import myapplication.android.vkvideoviewer.data.api.models.VideoList
 import myapplication.android.vkvideoviewer.data.database.entities.VideoEntity

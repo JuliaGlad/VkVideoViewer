@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.databinding.FragmentVideoBinding
 import myapplication.android.vkvideoviewer.di.DaggerAppComponent
-import myapplication.android.vkvideoviewer.di.component.fragment.video.DaggerVideoFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.listener.ClickListener
 import myapplication.android.vkvideoviewer.presentation.listener.LinearPaginationScrollListener
 import myapplication.android.vkvideoviewer.presentation.main.MainActivity
@@ -22,6 +21,7 @@ import myapplication.android.vkvideoviewer.presentation.mvi.LceState
 import myapplication.android.vkvideoviewer.presentation.mvi.MviBaseFragment
 import myapplication.android.vkvideoviewer.presentation.mvi.MviStore
 import myapplication.android.vkvideoviewer.presentation.model.VideoUiModel
+import myapplication.android.vkvideoviewer.presentation.video.di.DaggerVideoFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.video.mvi.VideoEffect
 import myapplication.android.vkvideoviewer.presentation.video.mvi.VideoIntent
 import myapplication.android.vkvideoviewer.presentation.video.mvi.VideoLocalDI

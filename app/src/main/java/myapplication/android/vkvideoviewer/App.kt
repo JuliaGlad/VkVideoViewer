@@ -1,4 +1,4 @@
-package myapplication.android.vkvideoviewer.app
+package myapplication.android.vkvideoviewer
 
 import android.app.Application
 import androidx.room.Room.databaseBuilder

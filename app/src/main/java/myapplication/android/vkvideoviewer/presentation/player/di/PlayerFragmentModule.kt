@@ -1,4 +1,4 @@
-package myapplication.android.vkvideoviewer.di.component.fragment.player
+package myapplication.android.vkvideoviewer.presentation.player.di
 
 import dagger.Binds
 import dagger.Module

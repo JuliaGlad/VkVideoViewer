@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
-import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -26,11 +25,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
-import myapplication.android.vkvideoviewer.app.Constants
 import myapplication.android.vkvideoviewer.databinding.FragmentPlayerBinding
 import myapplication.android.vkvideoviewer.databinding.PlayerCustomControllersBinding
 import myapplication.android.vkvideoviewer.di.DaggerAppComponent
-import myapplication.android.vkvideoviewer.di.component.fragment.player.DaggerPlayerFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.dialogs.OptionsDialogFragment
 import myapplication.android.vkvideoviewer.presentation.dialogs.VideoQualityDialogFragment
 import myapplication.android.vkvideoviewer.presentation.dialogs.VideoSpeedDialogFragment
@@ -41,6 +38,7 @@ import myapplication.android.vkvideoviewer.presentation.model.VideoUiModel
 import myapplication.android.vkvideoviewer.presentation.mvi.LceState
 import myapplication.android.vkvideoviewer.presentation.mvi.MviBaseFragment
 import myapplication.android.vkvideoviewer.presentation.mvi.MviStore
+import myapplication.android.vkvideoviewer.presentation.player.di.DaggerPlayerFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.player.model.PlayerArguments
 import myapplication.android.vkvideoviewer.presentation.player.model.VideoQualitiesUiList
 import myapplication.android.vkvideoviewer.presentation.player.mvi.PlayerEffect
@@ -83,11 +81,11 @@ class PlayerFragment : MviBaseFragment<
         var arguments: PlayerArguments
         with(activity?.intent!!) {
             arguments = PlayerArguments(
-                videoId = getIntExtra(Constants.VIDEO_ID, 0),
-                videoPage = getIntExtra(Constants.VIDEO_PAGE, 0),
-                title = getStringExtra(Constants.VIDEO_TITLE)!!,
-                views = getIntExtra(Constants.VIDEO_VIEWS, 0),
-                downloads = getIntExtra(Constants.VIDEO_DOWNLOADS, 0)
+                videoId = getIntExtra(VIDEO_ID, 0),
+                videoPage = getIntExtra(VIDEO_PAGE, 0),
+                title = getStringExtra(VIDEO_TITLE)!!,
+                views = getIntExtra(VIDEO_VIEWS, 0),
+                downloads = getIntExtra(VIDEO_DOWNLOADS, 0)
             )
         }
         return arguments
@@ -97,8 +95,8 @@ class PlayerFragment : MviBaseFragment<
     private var loading = false
     private var needUpdate = false
     private var isFullscreen = false
-    private var currentQuality = Constants.MEDIUM_ID
-    private var currentSpeed = Constants.NORMAL_ID
+    private var currentQuality = MEDIUM_ID
+    private var currentSpeed = NORMAL_ID
     private val videoQualities = mutableMapOf<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -137,8 +135,10 @@ class PlayerFragment : MviBaseFragment<
     override fun resolveEffect(effect: PlayerEffect) {
         when (effect) {
             PlayerEffect.FinishActivity -> {
-
+                TODO("FinishActivity")
             }
+
+            PlayerEffect.OpenAnotherVideo -> TODO()
         }
     }
 
@@ -172,9 +172,9 @@ class PlayerFragment : MviBaseFragment<
     }
 
     private fun setVideoQualities(qualityItem: VideoQualitiesUiList) {
-        videoQualities[Constants.TINY_ID] = qualityItem.tiny.url
-        videoQualities[Constants.SMALL_ID] = qualityItem.small.url
-        videoQualities[Constants.MEDIUM_ID] = qualityItem.medium.url
+        videoQualities[TINY_ID] = qualityItem.tiny.url
+        videoQualities[SMALL_ID] = qualityItem.small.url
+        videoQualities[MEDIUM_ID] = qualityItem.medium.url
     }
 
     private fun initMainItemData() {
@@ -195,7 +195,7 @@ class PlayerFragment : MviBaseFragment<
         player.setPlaybackSpeed(currentSpeed)
         player.setMediaSource(mediaSource)
 
-        loadVideo(0)
+        loadVideo()
         initVideoControlsButtons()
     }
 
@@ -215,7 +215,6 @@ class PlayerFragment : MviBaseFragment<
 
             buttonPlayAgain.setOnClickListener {
                 player.seekTo(0)
-                player.playWhenReady = true
                 buttonPlayAgain.visibility = GONE
                 buttonPlayPause.visibility = VISIBLE
             }
@@ -233,22 +232,20 @@ class PlayerFragment : MviBaseFragment<
         }
     }
 
-    private fun loadVideo(currentPosition: Long) {
+    private fun loadVideo() {
         val mediaItem = MediaItem.fromUri(Uri.parse(videoQualities[currentQuality]))
         player.setMediaItem(mediaItem)
         player.prepare()
-        startProgressUpdater(currentPosition)
+        startProgressUpdater()
         player.playWhenReady = true
-        if (currentPosition != 0L) player.seekTo(currentPosition)
         addProgressBarListener()
     }
 
     private fun addProgressBarListener() {
-
-        player.addListener(object : Player.Listener{
+        player.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
-                if (playbackState == Player.STATE_ENDED){
+                if (playbackState == Player.STATE_ENDED) {
                     with(customControllerBinding) {
                         buttonPlayPause.visibility = GONE
                         buttonPlayAgain.visibility = VISIBLE
@@ -256,10 +253,9 @@ class PlayerFragment : MviBaseFragment<
                 }
             }
         })
-
     }
 
-    private fun startProgressUpdater(currentPosition: Long) {
+    private fun startProgressUpdater() {
         with(customControllerBinding) {
             handler.post(object : Runnable {
                 override fun run() {
@@ -342,11 +338,11 @@ class PlayerFragment : MviBaseFragment<
         dialogFragment.setDialogDismissedListener(object : DialogDismissedListener {
             override fun handleDialogClose(args: Bundle?) {
                 if (args != null) {
-                    val option = args.getString(Constants.OPTIONS)
+                    val option = args.getString(OPTIONS)
                     if (option != null) {
                         when (option) {
-                            Constants.OPTION_SPEED -> showSpeedDialog()
-                            Constants.OPTION_QUALITY -> showQualityDialog()
+                            OPTION_SPEED -> showSpeedDialog()
+                            OPTION_QUALITY -> showQualityDialog()
                         }
                     }
                 }
@@ -360,12 +356,11 @@ class PlayerFragment : MviBaseFragment<
         dialogFragment.setDialogDismissedListener(object : DialogDismissedListener {
             override fun handleDialogClose(args: Bundle?) {
                 if (args != null) {
-                    val quality = args.getString(Constants.QUALITY)
+                    val quality = args.getString(QUALITY)
                     if (quality != null) {
                         if (quality != currentQuality) {
-                            val currentPosition = player.currentPosition
                             currentQuality = quality
-                            loadVideo(currentPosition)
+                            loadVideo()
                         }
                     }
                 }
@@ -379,7 +374,7 @@ class PlayerFragment : MviBaseFragment<
         dialogFragment.setDialogDismissedListener(object : DialogDismissedListener {
             override fun handleDialogClose(args: Bundle?) {
                 if (args != null) {
-                    val speed = args.getFloat(Constants.SPEED)
+                    val speed = args.getFloat(SPEED)
                     if (speed != currentSpeed) {
                         currentSpeed = speed
                         player.setPlaybackSpeed(currentSpeed)
@@ -421,12 +416,12 @@ class PlayerFragment : MviBaseFragment<
                             thumbnail = thumbnail,
                             itemClickListener = object : ClickListener {
                                 override fun onClick() {
-
+                                    store.sendEffect(PlayerEffect.OpenAnotherVideo)
                                 }
                             },
                             actionClickListener = object : ClickListener {
                                 override fun onClick() {
-                                    TODO("open menu to downloading")
+                                    TODO("open menu to saving")
                                 }
                             }
                         )
@@ -470,4 +465,20 @@ class PlayerFragment : MviBaseFragment<
         _binding = null
     }
 
+    companion object {
+        const val VIDEO_ID = "VideoId"
+        const val VIDEO_TITLE = "VideoTitle"
+        const val VIDEO_VIEWS = "VideoViews"
+        const val VIDEO_DOWNLOADS = "VideoDownloads"
+        const val VIDEO_PAGE = "VideoPage"
+        const val TINY_ID = "270р"
+        const val SMALL_ID = "360р"
+        const val MEDIUM_ID = "720р"
+        const val NORMAL_ID = 1f
+        const val OPTIONS = "OptionsId"
+        const val QUALITY = "QualityId"
+        const val SPEED = "SpeedId"
+        const val OPTION_QUALITY = "OptionQuality"
+        const val OPTION_SPEED = "OptionSpeed"
+    }
 }
