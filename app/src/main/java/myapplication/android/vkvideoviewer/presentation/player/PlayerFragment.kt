@@ -225,10 +225,8 @@ class PlayerFragment : MviBaseFragment<
                     val position = player.currentPosition
                     val duration = player.duration
                     timer.text = formatTime(position)
-
                     timeBar.setPosition(position)
                     timeBar.setDuration(duration)
-
                     handler.postDelayed(this, 1000)
                 }
             })
