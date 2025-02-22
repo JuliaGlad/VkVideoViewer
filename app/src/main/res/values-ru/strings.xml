@@ -9,4 +9,32 @@
     <string name="video_quality">Качество</string>
     <string name="speed_video">Скорость</string>
     <string name="ok">Ок</string>
+    <string name="videos">Видео</string>
+    <string name="images">Изображения</string>
+    <string name="saved">Сохраненное</string>
+
+    <string-array name="image_categories">
+        <item>Все</item>
+        <item>Пейзажи</item>
+        <item>Мода</item>
+        <item>Природа</item>
+        <item>Наука</item>
+        <item>Обучение</item>
+        <item>Чувства</item>
+        <item>Здоровье</item>
+        <item>Люди</item>
+        <item>Религия</item>
+        <item>Места</item>
+        <item>Животные</item>
+        <item>Промышленность</item>
+        <item>Технологии</item>
+        <item>Еда</item>
+        <item>Спорт</item>
+        <item>Транспорт</item>
+        <item>Путешествия</item>
+        <item>Здания</item>
+        <item>Бизнес</item>
+        <item>Музыка</item>
+    </string-array>
+
 </resources>

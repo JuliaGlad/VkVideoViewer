@@ -43,6 +43,8 @@ android {
 }
 
 dependencies {
+    implementation("com.github.chrisbanes:PhotoView:2.3.0")
+    implementation("com.github.terrakok:cicerone:7.1")
     implementation(libs.androidx.media3.exoplayer.dash)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.media3.exoplayer.v120)
@@ -53,6 +55,8 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.dagger.android)
     implementation(libs.dagger.android.support)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     ksp(libs.dagger.android.processor)
     ksp(libs.google.dagger.compiler)
     implementation(libs.androidx.room.runtime)

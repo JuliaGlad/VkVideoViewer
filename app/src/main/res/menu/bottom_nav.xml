@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_video"
+        android:enabled="true"
+        android:icon="@drawable/video_nav_icon"
+        android:title="@string/videos"/>
+
+    <item
+        android:id="@+id/action_images"
+        android:enabled="true"
+        android:icon="@drawable/image_nav_icon"
+        android:title="@string/images" />
+
+    <item
+        android:id="@+id/action_saved"
+        android:enabled="true"
+        android:icon="@drawable/bookmark_nav_icon"
+        android:title="@string/saved" />
+
+
+</menu>

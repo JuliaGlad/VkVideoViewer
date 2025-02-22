@@ -2,11 +2,16 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFF</color>
+    <color name="bottom_nav_background">#FBFBFB</color>
     <color name="icon_color">#415C3C</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="dark_green_background">#181B17</color>
     <color name="light_grey">#797979</color>
+    <color name="indicator_color">#EDEDED</color>
     <color name="dialog_background">#9E9E9E</color>
     <color name="main_green">#9ED595</color>
     <color name="text_input_layout_background">#EBEBEB</color>
+    <color name="tab_background_color">#F0F0F0</color>
+    <color name="image_full_screen_background">#2A2A2A</color>
+    <color name="image_full_toolbar">#1E1E1E</color>
 </resources>

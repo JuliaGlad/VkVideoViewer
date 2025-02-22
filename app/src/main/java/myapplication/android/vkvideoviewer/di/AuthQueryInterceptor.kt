@@ -12,9 +12,13 @@ class AuthQueryInterceptor: Interceptor {
         val url: HttpUrl = request
             .url
             .newBuilder()
-            .addQueryParameter("key", API_KEY)
+            .addQueryParameter(KEY, API_KEY)
             .build()
         request = request.newBuilder().url(url).build()
         return chain.proceed(request)
+    }
+
+    companion object{
+        const val KEY = "key"
     }
 }

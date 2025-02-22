@@ -1,7 +1,7 @@
 package myapplication.android.vkvideoviewer.data.repository
 
-import myapplication.android.vkvideoviewer.data.repository.dto.VideoDtoList
-import myapplication.android.vkvideoviewer.data.repository.dto.VideoQualitiesDtoList
+import myapplication.android.vkvideoviewer.data.repository.dto.video.VideoDtoList
+import myapplication.android.vkvideoviewer.data.repository.dto.video.VideoQualitiesDtoList
 
 interface VideoRepository {
 

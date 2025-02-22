@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import myapplication.android.vkvideoviewer.data.api.models.VideoQuality
+import myapplication.android.vkvideoviewer.data.database.entities.saved.SavedType
 
 abstract class Converter<T>(
     private val typeToken: TypeToken<T>
@@ -21,3 +22,5 @@ abstract class Converter<T>(
 }
 
 class VideoQualityConverter : Converter<VideoQuality?>(TypeToken.get(VideoQuality::class.java))
+
+class SavedTypeConverter: Converter<SavedType>(TypeToken.get(SavedType::class.java))

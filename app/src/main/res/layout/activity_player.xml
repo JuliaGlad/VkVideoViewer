@@ -6,12 +6,12 @@
     android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.player.PlayerActivity">
+    tools:context=".presentation.videos.player.PlayerActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/player_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="myapplication.android.vkvideoviewer.presentation.player.PlayerFragment"/>
+        android:name="myapplication.android.vkvideoviewer.presentation.videos.player.PlayerFragment"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

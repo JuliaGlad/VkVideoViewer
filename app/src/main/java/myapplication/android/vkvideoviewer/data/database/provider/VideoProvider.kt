@@ -1,6 +1,5 @@
 package myapplication.android.vkvideoviewer.data.database.provider
 
-import android.util.Log
 import myapplication.android.vkvideoviewer.App.Companion.app
 import myapplication.android.vkvideoviewer.data.api.models.Video
 import myapplication.android.vkvideoviewer.data.api.models.VideoList
@@ -44,7 +43,6 @@ class VideoProvider {
         else {
             for (i in data) {
                 if (i.videoId == id) {
-                    Log.i("Video local db", i.videoId.toString() + " " + i.title)
                     return i
                 }
             }

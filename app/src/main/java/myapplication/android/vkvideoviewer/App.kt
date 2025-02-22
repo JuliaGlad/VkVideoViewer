@@ -2,11 +2,15 @@ package myapplication.android.vkvideoviewer
 
 import android.app.Application
 import androidx.room.Room.databaseBuilder
+import com.github.terrakok.cicerone.Cicerone
 import myapplication.android.vkvideoviewer.data.database.LocalDatabase
 
 class App: Application() {
 
+    private val cicerone = Cicerone.create()
     val database: LocalDatabase by lazy { createDatabase() }
+    val router get() = cicerone.router
+    val navigatorHolder get() = cicerone.getNavigatorHolder()
 
     override fun onCreate() {
         super.onCreate()

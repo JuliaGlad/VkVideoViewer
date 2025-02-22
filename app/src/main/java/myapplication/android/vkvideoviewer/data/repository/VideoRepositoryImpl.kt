@@ -1,13 +1,12 @@
 package myapplication.android.vkvideoviewer.data.repository
 
-import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import myapplication.android.vkvideoviewer.data.mapper.toDto
-import myapplication.android.vkvideoviewer.data.repository.dto.VideoDtoList
-import myapplication.android.vkvideoviewer.data.repository.dto.VideoQualitiesDtoList
-import myapplication.android.vkvideoviewer.data.source.VideosLocalSource
-import myapplication.android.vkvideoviewer.data.source.VideosRemoteSource
+import myapplication.android.vkvideoviewer.data.mapper.video.toDto
+import myapplication.android.vkvideoviewer.data.repository.dto.video.VideoDtoList
+import myapplication.android.vkvideoviewer.data.repository.dto.video.VideoQualitiesDtoList
+import myapplication.android.vkvideoviewer.data.source.video.VideosLocalSource
+import myapplication.android.vkvideoviewer.data.source.video.VideosRemoteSource
 import javax.inject.Inject
 
 class VideoRepositoryImpl @Inject constructor(
@@ -25,9 +24,6 @@ class VideoRepositoryImpl @Inject constructor(
             localSource.insertVideos(page, remote)
             remote
         }.toDto()
-        for (i in result.items){
-            Log.i("Items videos repository id", i.id.toString())
-        }
         return result
     }
 
