@@ -6,6 +6,7 @@
     <color name="transparent">#00FFFFFF</color>
     <color name="dark_green_background">#181B17</color>
     <color name="light_grey">#797979</color>
+    <color name="dialog_background">#9E9E9E</color>
     <color name="main_green">#9ED595</color>
     <color name="text_input_layout_background">#EBEBEB</color>
 </resources>

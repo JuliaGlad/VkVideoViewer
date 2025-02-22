@@ -15,12 +15,14 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
-import android.widget.PopupMenu
 import androidx.annotation.OptIn
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.app.Constants
@@ -28,13 +30,18 @@ import myapplication.android.vkvideoviewer.databinding.FragmentPlayerBinding
 import myapplication.android.vkvideoviewer.databinding.PlayerCustomControllersBinding
 import myapplication.android.vkvideoviewer.di.DaggerAppComponent
 import myapplication.android.vkvideoviewer.di.component.fragment.player.DaggerPlayerFragmentComponent
+import myapplication.android.vkvideoviewer.presentation.dialogs.OptionsDialogFragment
+import myapplication.android.vkvideoviewer.presentation.dialogs.VideoQualityDialogFragment
+import myapplication.android.vkvideoviewer.presentation.dialogs.VideoSpeedDialogFragment
 import myapplication.android.vkvideoviewer.presentation.listener.ClickListener
+import myapplication.android.vkvideoviewer.presentation.listener.DialogDismissedListener
 import myapplication.android.vkvideoviewer.presentation.listener.LinearPaginationScrollListener
 import myapplication.android.vkvideoviewer.presentation.model.VideoUiModel
 import myapplication.android.vkvideoviewer.presentation.mvi.LceState
 import myapplication.android.vkvideoviewer.presentation.mvi.MviBaseFragment
 import myapplication.android.vkvideoviewer.presentation.mvi.MviStore
 import myapplication.android.vkvideoviewer.presentation.player.model.PlayerArguments
+import myapplication.android.vkvideoviewer.presentation.player.model.VideoQualitiesUiList
 import myapplication.android.vkvideoviewer.presentation.player.mvi.PlayerEffect
 import myapplication.android.vkvideoviewer.presentation.player.mvi.PlayerIntent
 import myapplication.android.vkvideoviewer.presentation.player.mvi.PlayerLocalDI
@@ -49,6 +56,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 
+@UnstableApi
 class PlayerFragment : MviBaseFragment<
         PlayerPartialState,
         PlayerIntent,
@@ -60,6 +68,15 @@ class PlayerFragment : MviBaseFragment<
 
     private lateinit var player: ExoPlayer
     private val args: PlayerArguments by lazy { getIntentArguments() }
+
+    private val adapter = VideoHorizontalItemAdapter()
+    private val recyclerItems: MutableList<VideoHorizontalItemModel> = mutableListOf()
+
+    private var _binding: FragmentPlayerBinding? = null
+    private val binding: FragmentPlayerBinding
+        get() = _binding!!
+    private var _customControllerBinding: PlayerCustomControllersBinding? = null
+    private val customControllerBinding get() = _customControllerBinding!!
 
     private fun getIntentArguments(): PlayerArguments {
         var arguments: PlayerArguments
@@ -75,23 +92,19 @@ class PlayerFragment : MviBaseFragment<
         return arguments
     }
 
-    private val adapter = VideoHorizontalItemAdapter()
-    private val recyclerItems: MutableList<VideoHorizontalItemModel> = mutableListOf()
-    private var _binding: FragmentPlayerBinding? = null
     private val handler = Handler(Looper.getMainLooper())
     private var loading = false
     private var needUpdate = false
     private var isFullscreen = false
-    private val binding: FragmentPlayerBinding
-        get() = _binding!!
-    private var _customControllerBinding: PlayerCustomControllersBinding? = null
-    private val customControllerBinding get() = _customControllerBinding!!
+    private var currentQuality = Constants.MEDIUM_ID
+    private var currentSpeed = Constants.NORMAL_ID
+    private val videoQualities = mutableMapOf<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = DaggerAppComponent.factory().create(requireContext())
         DaggerPlayerFragmentComponent.factory().create(appComponent).inject(this)
         super.onCreate(savedInstanceState)
-        player = createPlayer()
+        player = ExoPlayer.Builder(requireContext()).build()
         requireActivity().window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
@@ -115,10 +128,7 @@ class PlayerFragment : MviBaseFragment<
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         store.sendIntent(PlayerIntent.GetVideos(args.videoPage, args.videoId))
-
     }
-
-    private fun createPlayer() = ExoPlayer.Builder(requireContext()).build()
 
     override fun resolveEffect(effect: PlayerEffect) {
         when (effect) {
@@ -137,7 +147,8 @@ class PlayerFragment : MviBaseFragment<
                         initRecycler(state.ui.data.videos.items)
                         initMainItemData()
                         addScrollToEndListener()
-                        initPlayer(state.ui.data.qualities.medium.url)
+                        setVideoQualities(state.ui.data.qualities)
+                        initPlayer()
                     } else {
                         updateRecycler(state.ui.data.videos.items)
                     }
@@ -156,6 +167,12 @@ class PlayerFragment : MviBaseFragment<
         }
     }
 
+    private fun setVideoQualities(qualityItem: VideoQualitiesUiList) {
+        videoQualities[Constants.TINY_ID] = qualityItem.tiny.url
+        videoQualities[Constants.SMALL_ID] = qualityItem.small.url
+        videoQualities[Constants.MEDIUM_ID] = qualityItem.medium.url
+    }
+
     private fun initMainItemData() {
         with(binding) {
             videoTitle.text = args.title
@@ -164,9 +181,10 @@ class PlayerFragment : MviBaseFragment<
         }
     }
 
-    private fun initPlayer(url: String) {
+    private fun initPlayer() {
         binding.playerView.player = player
-        loadVideo(url)
+        player.setPlaybackSpeed(currentSpeed)
+        loadVideo()
         initVideoControlsButtons()
     }
 
@@ -193,22 +211,20 @@ class PlayerFragment : MviBaseFragment<
             buttonFullscreen.setOnClickListener {
                 toggleFullscreen()
             }
-            buttonOptions.setOnClickListener { showOptions(buttonOptions) }
+            buttonOptions.setOnClickListener { showOptionsDialog() }
         }
     }
 
-    private fun loadVideo(url: String) {
-        val mediaItem = MediaItem.fromUri(Uri.parse(url))
+    private fun loadVideo() {
+        val mediaItem = MediaItem.fromUri(Uri.parse(videoQualities[currentQuality]))
         player.setMediaItem(mediaItem)
         player.prepare()
-        player.playWhenReady = true
         startProgressUpdater()
+        player.playWhenReady = true
         addProgressBarListener()
     }
 
-    private fun addProgressBarListener() {
-    }
-
+    private fun addProgressBarListener() {}
 
     private fun startProgressUpdater() {
         with(customControllerBinding) {
@@ -227,7 +243,6 @@ class PlayerFragment : MviBaseFragment<
             })
         }
     }
-
 
     private fun toggleFullscreen() {
         val activity = requireActivity()
@@ -288,17 +303,56 @@ class PlayerFragment : MviBaseFragment<
         return "$minutesStr : $secondsStr"
     }
 
-    private fun showOptions(view: View) {
-        val popupMenu = PopupMenu(context, view)
-        popupMenu.menuInflater.inflate(R.menu.video_options_menu, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item ->
-            when (item.itemId) {
-                R.id.option_quality -> {}
-                R.id.option_speed -> {}
+    private fun showOptionsDialog() {
+        val dialogFragment = OptionsDialogFragment()
+        dialogFragment.show(activity?.supportFragmentManager!!, "OPTIONS_DIALOG")
+        dialogFragment.setDialogDismissedListener(object : DialogDismissedListener {
+            override fun handleDialogClose(args: Bundle?) {
+                if (args != null) {
+                    val option = args.getString(Constants.OPTIONS)
+                    if (option != null) {
+                        when (option){
+                            Constants.OPTION_SPEED -> showSpeedDialog()
+                            Constants.OPTION_QUALITY -> showQualityDialog()
+                        }
+                    }
+                }
             }
-            true
-        }
-        popupMenu.show()
+        })
+    }
+
+    private fun showQualityDialog() {
+        val dialogFragment = VideoQualityDialogFragment()
+        dialogFragment.show(activity?.supportFragmentManager!!, "OPTIONS_DIALOG")
+        dialogFragment.setDialogDismissedListener(object : DialogDismissedListener {
+            override fun handleDialogClose(args: Bundle?) {
+                if (args != null) {
+                    val quality = args.getString(Constants.QUALITY)
+                    if (quality != null) {
+                        if (quality != currentQuality){
+                            currentQuality = quality
+                            loadVideo()
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun showSpeedDialog() {
+        val dialogFragment = VideoSpeedDialogFragment()
+        dialogFragment.show(activity?.supportFragmentManager!!, "OPTIONS_DIALOG")
+        dialogFragment.setDialogDismissedListener(object : DialogDismissedListener {
+            override fun handleDialogClose(args: Bundle?) {
+                if (args != null) {
+                    val speed = args.getFloat(Constants.SPEED)
+                    if (speed != currentSpeed){
+                        currentSpeed = speed
+                        player.setPlaybackSpeed(currentSpeed)
+                    }
+                }
+            }
+        })
     }
 
     private fun updateRecycler(items: List<VideoUiModel>) {

@@ -7,7 +7,6 @@ import myapplication.android.vkvideoviewer.presentation.player.model.VideoQualit
 
 fun VideoQualityDomainList.toUi() =
     VideoQualitiesUiList(
-        large = large.toUi(),
         medium = medium.toUi(),
         small = small.toUi(),
         tiny = tiny.toUi()

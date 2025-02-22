@@ -1,0 +1,56 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="24dp"
+    android:background="@color/light_grey"
+    android:padding="8dp">
+
+
+    <ImageView
+        android:id="@+id/quality_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_quality_choose"
+        app:layout_constraintBottom_toBottomOf="@id/button_quality"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_quality" />
+
+    <TextView
+        android:id="@+id/button_quality"
+        style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/video_quality"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/quality_icon"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/speed_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:src="@drawable/ic_speed"
+        app:layout_constraintBottom_toBottomOf="@id/button_speed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_speed" />
+
+    <TextView
+        android:id="@+id/button_speed"
+        style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/speed_video"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/speed_icon"
+        app:layout_constraintTop_toBottomOf="@id/button_quality" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

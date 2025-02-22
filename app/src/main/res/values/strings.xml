@@ -8,4 +8,12 @@
     <string name="retry">Retry</string>
     <string name="video_quality">Quality</string>
     <string name="speed_video">Speed</string>
+    <string name="ok">Ok</string>
+    <string name="tiny_quality" translatable="false">270р</string>
+    <string name="small_quality" translatable="false">360р</string>
+    <string name="medium_quality" translatable="false">720р</string>
+    <string name="slowest_speed" translatable="false">0.5x</string>
+    <string name="normal_speed" translatable="false">1x</string>
+    <string name="faster_speed" translatable="false">1.5x</string>
+    <string name="medium_fast_speed" translatable="false">2x</string>
 </resources>

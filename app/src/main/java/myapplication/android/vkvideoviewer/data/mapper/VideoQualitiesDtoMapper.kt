@@ -7,7 +7,6 @@ import myapplication.android.vkvideoviewer.data.repository.dto.VideoQualityDto
 
 fun VideoQualitiesList.toDto() =
     VideoQualitiesDtoList(
-        large = large.toDto(),
         medium = medium.toDto(),
         small = small.toDto(),
         tiny = tiny.toDto()
