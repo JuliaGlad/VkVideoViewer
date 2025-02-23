@@ -1,5 +1,6 @@
 package myapplication.android.vkvideoviewer.presentation.videos.player.mvi
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import myapplication.android.vkvideoviewer.domain.usecase.video.GetVideosQualitiesUseCase
@@ -31,6 +32,25 @@ class PlayerActor(
             )
 
             PlayerIntent.GetNewVideos -> loadVideos(state.page + 1)
+            is PlayerIntent.GetVideoQuality -> loadQualities(
+                intent.videoPage,
+                intent.videoId
+            )
+
+        }
+
+    private fun loadQualities(videoPage: Int, videoId: Int) =
+        flow {
+            kotlin.runCatching {
+                getQualities(videoPage, videoId)
+            }.fold(
+                onSuccess = {data ->
+                    emit(PlayerPartialState.VideoQualitiesLoaded(data))
+                },
+                onFailure = {throwable ->
+                    emit(PlayerPartialState.Error(throwable))
+                }
+            )
         }
 
     private fun loadVideos(page: Int) =

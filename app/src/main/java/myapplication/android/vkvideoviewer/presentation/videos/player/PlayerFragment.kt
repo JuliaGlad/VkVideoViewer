@@ -20,10 +20,7 @@ import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.common.util.Util
-import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.recyclerview.widget.LinearLayoutManager
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.databinding.FragmentPlayerBinding
@@ -35,10 +32,10 @@ import myapplication.android.vkvideoviewer.presentation.dialogs.VideoSpeedDialog
 import myapplication.android.vkvideoviewer.presentation.listener.ClickListener
 import myapplication.android.vkvideoviewer.presentation.listener.DialogDismissedListener
 import myapplication.android.vkvideoviewer.presentation.listener.LinearPaginationScrollListener
-import myapplication.android.vkvideoviewer.presentation.videos.model.VideoUiModel
 import myapplication.android.vkvideoviewer.presentation.mvi.LceState
 import myapplication.android.vkvideoviewer.presentation.mvi.MviBaseFragment
 import myapplication.android.vkvideoviewer.presentation.mvi.MviStore
+import myapplication.android.vkvideoviewer.presentation.videos.model.VideoUiModel
 import myapplication.android.vkvideoviewer.presentation.videos.player.di.DaggerPlayerFragmentComponent
 import myapplication.android.vkvideoviewer.presentation.videos.player.model.PlayerArguments
 import myapplication.android.vkvideoviewer.presentation.videos.player.model.VideoQualitiesUiList
@@ -67,7 +64,7 @@ class PlayerFragment : MviBaseFragment<
     lateinit var localDI: PlayerLocalDI
 
     private lateinit var player: ExoPlayer
-    private val args: PlayerArguments by lazy { getIntentArguments() }
+    private lateinit var args: PlayerArguments
 
     private val adapter = VideoHorizontalItemAdapter()
     private val recyclerItems: MutableList<VideoHorizontalItemModel> = mutableListOf()
@@ -107,6 +104,7 @@ class PlayerFragment : MviBaseFragment<
         super.onCreate(savedInstanceState)
 
         player = ExoPlayer.Builder(requireContext()).build()
+        args = getIntentArguments()
 
         requireActivity().window.setFlags(
             WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
@@ -137,10 +135,20 @@ class PlayerFragment : MviBaseFragment<
     override fun resolveEffect(effect: PlayerEffect) {
         when (effect) {
             PlayerEffect.FinishActivity -> {
-                TODO("FinishActivity")
+                (activity as PlayerActivity).finish()
             }
 
-            PlayerEffect.OpenAnotherVideo -> TODO()
+            is PlayerEffect.OpenAnotherVideo -> {
+                with(effect.playerArguments){
+                    binding.loadingLayout.root.visibility = VISIBLE
+                    args = this
+                    store.sendIntent(PlayerIntent.GetVideoQuality(args.videoPage, args.videoId))
+                    initMainItemData()
+                    customControllerBinding.videoTitlePlayer.text = title
+                    customControllerBinding.buttonPlayAgain.visibility = GONE
+                    customControllerBinding.buttonPlayPause.visibility = VISIBLE
+                }
+            }
         }
     }
 
@@ -150,14 +158,22 @@ class PlayerFragment : MviBaseFragment<
                 is LceState.Content -> {
                     binding.errorLayout.buttonLoader.visibility = GONE
                     setLayoutVisibility(GONE, GONE)
-                    if (!needUpdate) {
-                        initRecycler(state.ui.data.videos.items)
-                        initMainItemData()
-                        addScrollToEndListener()
-                        setVideoQualities(state.ui.data.qualities)
-                        initPlayer()
+                    if (!state.isNewVideo) {
+                        if (!needUpdate) {
+                            initRecycler(state.ui.data.videos.items, state.page)
+                            initMainItemData()
+                            addScrollToEndListener()
+                            setVideoQualities(state.ui.data.qualities)
+                            initPlayer()
+                        } else {
+                            updateRecycler(state.ui.data.videos.items, state.page)
+                        }
                     } else {
-                        updateRecycler(state.ui.data.videos.items)
+                        setVideoQualities(state.ui.data.qualities)
+                        currentQuality = MEDIUM_ID
+                        currentSpeed = NORMAL_ID
+                        loadVideo()
+                        binding.loadingLayout.root.visibility = GONE
                     }
                 }
 
@@ -171,7 +187,7 @@ class PlayerFragment : MviBaseFragment<
                     }
                 }
 
-                LceState.Loading ->{
+                LceState.Loading -> {
                     binding.errorLayout.buttonLoader.visibility = GONE
                     setLayoutVisibility(VISIBLE, GONE)
                 }
@@ -194,15 +210,8 @@ class PlayerFragment : MviBaseFragment<
     }
 
     private fun initPlayer() {
-        val userAgent = Util.getUserAgent(requireContext(), activity?.applicationInfo!!.name)
-        val dataSource = DefaultHttpDataSource.Factory().setUserAgent(userAgent)
-        val mediaSource = ProgressiveMediaSource.Factory(dataSource)
-            .createMediaSource(MediaItem.fromUri(videoQualities[currentQuality]!!))
-
         binding.playerView.player = player
         player.setPlaybackSpeed(currentSpeed)
-        player.setMediaSource(mediaSource)
-
         loadVideo()
         initVideoControlsButtons()
     }
@@ -230,9 +239,11 @@ class PlayerFragment : MviBaseFragment<
             buttonMoveForward.setOnClickListener {
                 player.seekTo(min(player.currentPosition + 10000, player.duration))
             }
+
             buttonMoveBack.setOnClickListener {
                 player.seekTo(max(player.currentPosition - 10000, 0))
             }
+
             buttonFullscreen.setOnClickListener {
                 toggleFullscreen()
             }
@@ -391,8 +402,8 @@ class PlayerFragment : MviBaseFragment<
         })
     }
 
-    private fun updateRecycler(items: List<VideoUiModel>) {
-        val newItems = getRecyclerItemsModels(items)
+    private fun updateRecycler(items: List<VideoUiModel>, page: Int) {
+        val newItems = getRecyclerItemsModels(items, page)
         val startPosition = recyclerItems.size
         recyclerItems.addAll(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
@@ -400,14 +411,14 @@ class PlayerFragment : MviBaseFragment<
         needUpdate = false
     }
 
-    private fun initRecycler(items: List<VideoUiModel>) {
-        val newItems = getRecyclerItemsModels(items)
+    private fun initRecycler(items: List<VideoUiModel>, page: Int) {
+        val newItems = getRecyclerItemsModels(items, page)
         recyclerItems.addAll(newItems)
         binding.recyclerView.adapter = adapter
         adapter.submitList(newItems)
     }
 
-    private fun getRecyclerItemsModels(items: List<VideoUiModel>): List<VideoHorizontalItemModel> {
+    private fun getRecyclerItemsModels(items: List<VideoUiModel>, page: Int): List<VideoHorizontalItemModel> {
         val newItems = mutableListOf<VideoHorizontalItemModel>()
         items.forEachIndexed { index, videoUiModel ->
             if (videoUiModel.id != args.videoId) {
@@ -423,7 +434,15 @@ class PlayerFragment : MviBaseFragment<
                             thumbnail = thumbnail,
                             itemClickListener = object : ClickListener {
                                 override fun onClick() {
-                                    store.sendEffect(PlayerEffect.OpenAnotherVideo)
+                                    store.sendEffect(PlayerEffect.OpenAnotherVideo(
+                                        PlayerArguments(
+                                            videoId = videoUiModel.id,
+                                            videoPage = page,
+                                            title = title,
+                                            views = views,
+                                            downloads = downloads
+                                        )
+                                    ))
                                 }
                             },
                             actionClickListener = object : ClickListener {
