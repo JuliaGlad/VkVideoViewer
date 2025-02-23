@@ -8,6 +8,7 @@ sealed interface VideoEffect: MviEffect {
         val videoId: Int,
         val page: Int,
         val title: String,
+        val thumbnail: String,
         val views: Int,
         val downloads: Int
     ): VideoEffect

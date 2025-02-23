@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
         videoPage: Int,
         title: String,
         views: Int,
+        thumbnail: String,
         downloads: Int
     ) {
         val intent = Intent(this, PlayerActivity::class.java).apply {
@@ -57,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             putExtra(VIDEO_PAGE, videoPage)
             putExtra(VIDEO_TITLE, title)
             putExtra(VIDEO_VIEWS, views)
+            putExtra(THUMBNAIL, thumbnail)
             putExtra(VIDEO_DOWNLOADS, downloads)
         }
         val options = ActivityOptions.makeCustomAnimation(
@@ -100,6 +102,7 @@ class MainActivity : AppCompatActivity() {
         const val VIDEO_DOWNLOADS = "VideoDownloads"
         const val VIDEO_PAGE = "VideoPage"
         const val IMAGE_URL = "ImageUrlId"
+        const val THUMBNAIL = "Thumbnail"
     }
 
 }

@@ -82,6 +82,7 @@ class VideoFragment : MviBaseFragment<
                         videoPage = page,
                         title = title,
                         views = views,
+                        thumbnail = thumbnail,
                         downloads = downloads
                     )
                 }
@@ -213,6 +214,7 @@ class VideoFragment : MviBaseFragment<
                                         page = page,
                                         title = title,
                                         views = views,
+                                        thumbnail = thumbnail,
                                         downloads = downloads
                                     )
                                 )

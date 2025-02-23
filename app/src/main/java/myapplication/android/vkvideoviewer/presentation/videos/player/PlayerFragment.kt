@@ -16,12 +16,15 @@ import android.view.ViewGroup
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
+import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import jp.wasabeef.glide.transformations.BlurTransformation
 import myapplication.android.vkvideoviewer.R
 import myapplication.android.vkvideoviewer.databinding.FragmentPlayerBinding
 import myapplication.android.vkvideoviewer.databinding.PlayerCustomControllersBinding
@@ -83,6 +86,7 @@ class PlayerFragment : MviBaseFragment<
                 videoPage = getIntExtra(VIDEO_PAGE, 0),
                 title = getStringExtra(VIDEO_TITLE)!!,
                 views = getIntExtra(VIDEO_VIEWS, 0),
+                thumbnail = getStringExtra(THUMBNAIL)!!,
                 downloads = getIntExtra(VIDEO_DOWNLOADS, 0)
             )
         }
@@ -214,6 +218,11 @@ class PlayerFragment : MviBaseFragment<
             videoTitle.text = args.title
             viewsCount.text = "${args.views}"
             downloadsCount.text = "${args.downloads}"
+            Glide.with(requireContext())
+                .load(args.thumbnail.toUri())
+                .transform(BlurTransformation(25, 3))
+                .into(thumbnailBlurry)
+            thumbnailBlurry.alpha = 0.8f
         }
     }
 
@@ -448,6 +457,7 @@ class PlayerFragment : MviBaseFragment<
                                             videoPage = page,
                                             title = title,
                                             views = views,
+                                            thumbnail = thumbnail,
                                             downloads = downloads
                                         )
                                     ))
@@ -524,6 +534,7 @@ class PlayerFragment : MviBaseFragment<
         const val NORMAL_ID = 1f
         const val OPTIONS = "OptionsId"
         const val QUALITY = "QualityId"
+        const val THUMBNAIL = "Thumbnail"
         const val SPEED = "SpeedId"
         const val OPTION_QUALITY = "OptionQuality"
         const val OPTION_SPEED = "OptionSpeed"
