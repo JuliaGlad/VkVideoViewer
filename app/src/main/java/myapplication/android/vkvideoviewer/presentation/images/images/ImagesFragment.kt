@@ -1,5 +1,6 @@
 package myapplication.android.vkvideoviewer.presentation.images.images
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -41,6 +42,7 @@ class ImagesFragment : MviBaseFragment<
     private var _binding: FragmentImagesBinding? = null
     private val binding get() = _binding!!
 
+    private val viewModel by viewModels<ImagesViewModel>()
     private val recyclerItems = mutableListOf<ImageItemModel>()
     private var needUpdate = false
     private var loading = false
@@ -68,7 +70,13 @@ class ImagesFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sendIntent()
+        if (viewModel.items.value.isEmpty()) {
+            sendIntent()
+        } else {
+            viewModel.addItems(viewModel.items.value)
+            binding.recyclerView.adapter = adapter
+            adapter.submitList(recyclerItems)
+        }
     }
 
     private fun sendIntent() {
@@ -141,15 +149,19 @@ class ImagesFragment : MviBaseFragment<
         val newItems = getRecyclerItems(data)
         val startPosition = recyclerItems.size
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
         needUpdate = false
         loading = false
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun refreshRecycler(items: List<ImageUiModel>) {
         recyclerItems.clear()
+        viewModel.removeAll()
         val newItems = getRecyclerItems(items)
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         adapter.notifyDataSetChanged()
         binding.swipeRefreshLayout.isRefreshing = false
         needUpdate = false
@@ -159,6 +171,7 @@ class ImagesFragment : MviBaseFragment<
     private fun initRecycler(items: List<ImageUiModel>) {
         val newItems = getRecyclerItems(items)
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         binding.recyclerView.adapter = adapter
         adapter.submitList(recyclerItems)
     }

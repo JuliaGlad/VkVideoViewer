@@ -46,6 +46,7 @@ class VideoFragment : MviBaseFragment<
     private var recyclerItems: MutableList<VideoItemModel> = mutableListOf()
     private var _binding: FragmentVideoBinding? = null
     private val binding get() = _binding!!
+    private val viewModel by viewModels<VideoViewModel>()
     private var needUpdate = false
     private var loading = false
     override val store: MviStore<VideoPartialState, VideoIntent, VideoState, VideoEffect>
@@ -70,7 +71,13 @@ class VideoFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        store.sendIntent(VideoIntent.GetVideos)
+        if (viewModel.items.value.isEmpty()) {
+            store.sendIntent(VideoIntent.GetVideos)
+        } else {
+            viewModel.addItems(viewModel.items.value)
+            binding.recyclerView.adapter = adapter
+            adapter.submitList(recyclerItems)
+        }
     }
 
     override fun resolveEffect(effect: VideoEffect) {
@@ -128,8 +135,10 @@ class VideoFragment : MviBaseFragment<
 
     private fun clearAndUpdateRecycler(items: List<VideoUiModel>, page: Int) {
         recyclerItems.clear()
+        viewModel.removeAll()
         val newItems = getRecyclerItemsModels(items, page)
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         adapter.notifyDataSetChanged()
         binding.swipeRefreshLayout.isRefreshing = false
         needUpdate = false
@@ -140,6 +149,7 @@ class VideoFragment : MviBaseFragment<
         val newItems = getRecyclerItemsModels(items, page)
         val startPosition = recyclerItems.size
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
         needUpdate = false
         loading = false
@@ -190,6 +200,7 @@ class VideoFragment : MviBaseFragment<
         val newItems = getRecyclerItemsModels(items, page)
         binding.recyclerView.adapter = adapter
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         adapter.submitList(recyclerItems)
     }
 
