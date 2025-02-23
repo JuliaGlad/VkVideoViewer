@@ -42,13 +42,13 @@ class VideoFragment : MviBaseFragment<
     @Inject
     lateinit var localDI: VideoLocalDI
 
-    private val adapter = VideoItemAdapter()
+    private val adapter: VideoItemAdapter = VideoItemAdapter()
     private var recyclerItems: MutableList<VideoItemModel> = mutableListOf()
     private var _binding: FragmentVideoBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<VideoViewModel>()
-    private var needUpdate = false
-    private var loading = false
+    private var needUpdate: Boolean = false
+    private var loading: Boolean = false
     override val store: MviStore<VideoPartialState, VideoIntent, VideoState, VideoEffect>
             by viewModels {
                 VideoStoreFactory(localDI.actor, localDI.reducer)

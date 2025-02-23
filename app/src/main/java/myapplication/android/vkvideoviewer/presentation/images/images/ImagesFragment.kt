@@ -42,10 +42,10 @@ class ImagesFragment : MviBaseFragment<
     private var _binding: FragmentImagesBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel by viewModels<ImagesViewModel>()
+    private val viewModel: ImagesViewModel by viewModels<ImagesViewModel>()
     private val recyclerItems = mutableListOf<ImageItemModel>()
-    private var needUpdate = false
-    private var loading = false
+    private var needUpdate: Boolean = false
+    private var loading: Boolean = false
 
     @Inject
     lateinit var localDI: ImagesLocalDI

@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="20dp"
-            android:contentDescription="Логотип"
             android:src="@drawable/vvv_icon" />
 
         <com.google.android.material.textfield.TextInputLayout

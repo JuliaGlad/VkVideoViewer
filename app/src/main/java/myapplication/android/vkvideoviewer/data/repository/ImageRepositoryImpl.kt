@@ -1,5 +1,6 @@
 package myapplication.android.vkvideoviewer.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import myapplication.android.vkvideoviewer.data.mapper.image.toDto
@@ -14,6 +15,7 @@ class ImageRepositoryImpl @Inject constructor(
     private val localSource: ImageLocalSource
 ): ImageRepository {
     override suspend fun getImageByCategory(category: String, page: Int): ImageDtoList {
+        Log.i("Category", category.toString())
         val local = localSource.getImagesByCategory(category, page)
         return if (local != null) local
         else {

@@ -17,12 +17,8 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-    private val navigator = AppNavigator(this, R.id.main_container)
-    private val presenter: MainPresenter by lazy {
-        MainPresenter(
-            app.router
-        )
-    }
+    private val navigator: AppNavigator = AppNavigator(this, R.id.main_container)
+    private val presenter: MainPresenter by lazy { MainPresenter(app.router) }
     private val navigationHolder: NavigatorHolder by lazy { app.navigatorHolder }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -69,10 +69,10 @@ class PlayerFragment : MviBaseFragment<
     private lateinit var player: ExoPlayer
     private lateinit var args: PlayerArguments
 
-    private val adapter = VideoHorizontalItemAdapter()
+    private val adapter: VideoHorizontalItemAdapter = VideoHorizontalItemAdapter()
     private val recyclerItems: MutableList<VideoHorizontalItemModel> = mutableListOf()
 
-    private val viewModel by viewModels<PlayerViewModel>()
+    private val viewModel : PlayerViewModel by viewModels<PlayerViewModel>()
     private var _binding: FragmentPlayerBinding? = null
     private val binding: FragmentPlayerBinding
         get() = _binding!!
@@ -94,13 +94,13 @@ class PlayerFragment : MviBaseFragment<
         return arguments
     }
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var loading = false
-    private var needUpdate = false
-    private var isFullscreen = false
-    private var currentQuality = MEDIUM_ID
-    private var currentSpeed = NORMAL_ID
-    private val videoQualities = mutableMapOf<String, String>()
+    private val handler: Handler = Handler(Looper.getMainLooper())
+    private var loading: Boolean = false
+    private var needUpdate: Boolean = false
+    private var isFullscreen: Boolean = false
+    private var currentQuality: String = MEDIUM_ID
+    private var currentSpeed: Float = NORMAL_ID
+    private val videoQualities: MutableMap<String, String> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = DaggerAppComponent.factory().create(requireContext())
@@ -371,11 +371,9 @@ class PlayerFragment : MviBaseFragment<
         val minutes = TimeUnit.MILLISECONDS.toMinutes(time)
         val seconds = (TimeUnit.MILLISECONDS.toSeconds(time) % 60)
         val minutesStr =
-            if (minutes < 10) "0$minutes"
-            else "$minutes"
+            if (minutes < 10) "0$minutes" else "$minutes"
         val secondsStr =
-            if (seconds < 10) "0$seconds"
-            else "$seconds"
+            if (seconds < 10) "0$seconds" else "$seconds"
 
         return "$minutesStr : $secondsStr"
     }
