@@ -85,9 +85,9 @@ class PlayerFragment : MviBaseFragment<
             arguments = PlayerArguments(
                 videoId = getIntExtra(VIDEO_ID, 0),
                 videoPage = getIntExtra(VIDEO_PAGE, 0),
-                title = getStringExtra(VIDEO_TITLE)!!,
+                title = getStringExtra(VIDEO_TITLE),
                 views = getIntExtra(VIDEO_VIEWS, 0),
-                thumbnail = getStringExtra(THUMBNAIL)!!,
+                thumbnail = getStringExtra(THUMBNAIL),
                 downloads = getIntExtra(VIDEO_DOWNLOADS, 0)
             )
         }
@@ -233,7 +233,7 @@ class PlayerFragment : MviBaseFragment<
             viewsCount.text = "${args.views}"
             downloadsCount.text = "${args.downloads}"
             Glide.with(requireContext())
-                .load(args.thumbnail.toUri())
+                .load(args.thumbnail?.toUri())
                 .transform(BlurTransformation(25, 3))
                 .into(thumbnailBlurry)
             thumbnailBlurry.alpha = 0.8f
