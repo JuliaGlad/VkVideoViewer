@@ -179,6 +179,7 @@ class PlayerFragment : MviBaseFragment<
                     setLayoutVisibility(GONE, GONE)
                     if (!state.isNewVideo) {
                         if (!needUpdate) {
+                            initButtonBack()
                             initRecycler(state.ui.data.videos.items, state.page)
                             initMainItemData()
                             addScrollToEndListener()
@@ -211,6 +212,12 @@ class PlayerFragment : MviBaseFragment<
                     setLayoutVisibility(VISIBLE, GONE)
                 }
             }
+        }
+    }
+
+    private fun initButtonBack() {
+        binding.arrowDown.setOnClickListener {
+            store.sendEffect(PlayerEffect.FinishActivity)
         }
     }
 

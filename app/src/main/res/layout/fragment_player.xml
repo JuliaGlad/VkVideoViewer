@@ -119,6 +119,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/downloads_title" />
 
+    <ImageButton
+        android:id="@+id/arrow_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/transparent"
+        android:src="@drawable/ic_arrow_down"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
     <include
         android:id="@+id/loading_layout"
         layout="@layout/loading_layout"

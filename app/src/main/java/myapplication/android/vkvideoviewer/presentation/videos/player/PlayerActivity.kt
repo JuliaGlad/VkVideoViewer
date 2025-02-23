@@ -1,9 +1,11 @@
 package myapplication.android.vkvideoviewer.presentation.videos.player
 
+import android.R
 import android.os.Bundle
 import android.transition.TransitionInflater
 import androidx.appcompat.app.AppCompatActivity
 import myapplication.android.vkvideoviewer.databinding.ActivityPlayerBinding
+
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -15,7 +17,7 @@ class PlayerActivity : AppCompatActivity() {
         _binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.sharedElementEnterTransition = TransitionInflater.from(this)
-            .inflateTransition(android.R.transition.move)
+            .inflateTransition(R.transition.move)
     }
 
     override fun onDestroy() {
