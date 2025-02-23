@@ -71,7 +71,6 @@ class MainActivity : AppCompatActivity() {
             val screen: Screen? = when (item.itemId) {
                 R.id.action_video -> BottomScreen.videos()
                 R.id.action_images -> BottomScreen.images()
-                R.id.action_saved -> BottomScreen.saved()
                 else -> null
             }
             screen?.let { presenter.navigateTo(it) }

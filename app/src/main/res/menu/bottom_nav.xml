@@ -13,11 +13,5 @@
         android:icon="@drawable/image_nav_icon"
         android:title="@string/images" />
 
-    <item
-        android:id="@+id/action_saved"
-        android:enabled="true"
-        android:icon="@drawable/bookmark_nav_icon"
-        android:title="@string/saved" />
-
 
 </menu>

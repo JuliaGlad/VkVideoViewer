@@ -1,9 +1,12 @@
 [versions]
 agp = "8.7.3"
+cicerone = "7.1"
+compilerVersion = "4.15.1"
 converterGson = "2.9.0"
 daggerAndroid = "2.55"
 fragmentKtx = "1.8.6"
 glide = "4.16.0"
+glideTransformations = "4.3.0"
 googleDaggerCompiler = "2.52"
 googleGson = "2.11.0"
 gson = "2.10.1"
@@ -23,6 +26,7 @@ media3ExoplayerVersion = "1.2.0"
 media3Ui = "1.2.0"
 mkloader = "1.4.0"
 okhttpBom = "4.12.0"
+photoviewVersion = "2.3.0"
 retrofit = "2.9.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 roomRuntime = "2.6.1"
@@ -43,11 +47,15 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+chrisbanes-photoview = { module = "com.github.chrisbanes:PhotoView", version.ref = "photoviewVersion" }
+cicerone = { module = "com.github.terrakok:cicerone", version.ref = "cicerone" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "daggerAndroid" }
 dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "daggerAndroid" }
 dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "daggerAndroid" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compilerVersion" }
+glide-transformations = { module = "jp.wasabeef:glide-transformations", version.ref = "glideTransformations" }
 google-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "googleDaggerCompiler" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 gson-v2110 = { module = "com.google.code.gson:gson", version.ref = "googleGson" }

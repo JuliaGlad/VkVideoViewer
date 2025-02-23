@@ -14,6 +14,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import jp.wasabeef.glide.transformations.BlurTransformation
 import myapplication.android.vkvideoviewer.databinding.RecyclerViewImageItemBinding
 import myapplication.android.vkvideoviewer.databinding.RecyclerViewVideoItemBinding
 import myapplication.android.vkvideoviewer.presentation.listener.ClickListener
@@ -42,34 +43,47 @@ class ImageItemAdapter
                 viewsCount.text = "${model.views}"
                 downloadsCount.text = "${model.downloads}"
                 binding.loader.root.visibility = VISIBLE
-                Glide.with(itemView.context)
-                    .load(model.thumbnail.toUri())
-                    .listener(object : RequestListener<Drawable>{
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable>,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            Log.e("Loading in imageItem adapter failed", e?.message.toString())
-                            return false
-                        }
 
-                        override fun onResourceReady(
-                            resource: Drawable,
-                            model: Any,
-                            target: Target<Drawable>?,
-                            dataSource: DataSource,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            binding.loader.root.visibility = GONE
-                            return false
-                        }
-
-                    })
-                    .into(thumbnail)
+                setImageUri(model)
                 setClickListeners(model.actionClickListener, model.itemClickListener)
             }
+        }
+
+        private fun RecyclerViewImageItemBinding.setImageUri(
+            model: ImageItemModel
+        ) {
+            Glide.with(itemView.context)
+                .load(model.thumbnail.toUri())
+                .transform(BlurTransformation(25, 3))
+                .into(thumbnailBlurry)
+            thumbnailBlurry.alpha = 0.7f
+
+            Glide.with(itemView.context)
+                .load(model.thumbnail.toUri())
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        Log.e("Loading in imageItem adapter failed", e?.message.toString())
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        binding.loader.root.visibility = GONE
+                        return false
+                    }
+
+                })
+                .into(thumbnail)
         }
 
         private fun setClickListeners(actionListener: ClickListener, itemListener: ClickListener) {
