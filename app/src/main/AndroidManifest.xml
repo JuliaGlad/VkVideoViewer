@@ -23,6 +23,7 @@
         <activity
             android:name=".presentation.videos.player.PlayerActivity"
             android:configChanges="orientation|screenSize|screenLayout"
+            android:screenOrientation="unspecified"
             android:exported="false" />
         <activity
             android:name=".presentation.main.MainActivity"

@@ -72,6 +72,7 @@ class PlayerFragment : MviBaseFragment<
     private val adapter = VideoHorizontalItemAdapter()
     private val recyclerItems: MutableList<VideoHorizontalItemModel> = mutableListOf()
 
+    private val viewModel by viewModels<PlayerViewModel>()
     private var _binding: FragmentPlayerBinding? = null
     private val binding: FragmentPlayerBinding
         get() = _binding!!
@@ -97,7 +98,6 @@ class PlayerFragment : MviBaseFragment<
     private var loading = false
     private var needUpdate = false
     private var isFullscreen = false
-    private var previousOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
     private var currentQuality = MEDIUM_ID
     private var currentSpeed = NORMAL_ID
     private val videoQualities = mutableMapOf<String, String>()
@@ -133,7 +133,13 @@ class PlayerFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        store.sendIntent(PlayerIntent.GetVideos(args.videoPage, args.videoId))
+        if (viewModel.items.value.isEmpty()) {
+            store.sendIntent(PlayerIntent.GetVideos(args.videoPage, args.videoId))
+        } else {
+            viewModel.addItems(viewModel.items.value)
+            binding.recyclerView.adapter = adapter
+            adapter.submitList(recyclerItems)
+        }
     }
 
     override fun resolveEffect(effect: PlayerEffect) {
@@ -143,14 +149,15 @@ class PlayerFragment : MviBaseFragment<
             }
 
             is PlayerEffect.OpenAnotherVideo -> {
-                with(effect.playerArguments){
+                with(effect.playerArguments) {
                     binding.loadingLayout.root.visibility = VISIBLE
                     args = this
                     store.sendIntent(PlayerIntent.GetVideoQuality(args.videoPage, args.videoId))
                     initMainItemData()
-                    for (i in recyclerItems){
+                    for (i in recyclerItems) {
                         val index = recyclerItems.indexOf(i)
-                        if (i.videoId == args.videoId){
+                        if (i.videoId == args.videoId) {
+                            viewModel.removeItem(i)
                             recyclerItems.removeAt(index)
                             adapter.notifyItemRemoved(index)
                             break
@@ -310,48 +317,54 @@ class PlayerFragment : MviBaseFragment<
 
     private fun toggleFullscreen() {
         val activity = requireActivity()
-        val window = activity.window
-
         if (!isFullscreen) {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.insetsController?.apply {
-                    hide(WindowInsets.Type.systemBars())
-                    systemBarsBehavior =
-                        WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                }
-            } else {
-                @Suppress("DEPRECATION")
-                window.decorView.systemUiVisibility = (
-                        View.SYSTEM_UI_FLAG_FULLSCREEN
-                                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                        )
-            }
-            binding.playerView.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT
-            )
-
+            enterFullscreen()
         } else {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-
-            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                window.insetsController?.show(WindowInsets.Type.systemBars())
-            } else {
-                @Suppress("DEPRECATION")
-                window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
-            }
-            binding.playerView.layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+            exitFullscreen()
         }
         isFullscreen = !isFullscreen
+    }
+
+    private fun exitFullscreen() {
+        val window = requireActivity().window
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.show(WindowInsets.Type.systemBars())
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE
+        }
+        binding.playerView.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+    }
+
+    private fun enterFullscreen() {
+        val window = requireActivity().window
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.apply {
+                hide(WindowInsets.Type.systemBars())
+                systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility = (
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    )
+        }
+        binding.playerView.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
     }
 
     private fun formatTime(time: Long): CharSequence {
@@ -423,6 +436,7 @@ class PlayerFragment : MviBaseFragment<
         val newItems = getRecyclerItemsModels(items, page)
         val startPosition = recyclerItems.size
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
         loading = false
         needUpdate = false
@@ -431,11 +445,15 @@ class PlayerFragment : MviBaseFragment<
     private fun initRecycler(items: List<VideoUiModel>, page: Int) {
         val newItems = getRecyclerItemsModels(items, page)
         recyclerItems.addAll(newItems)
+        viewModel.addItems(newItems)
         binding.recyclerView.adapter = adapter
         adapter.submitList(recyclerItems)
     }
 
-    private fun getRecyclerItemsModels(items: List<VideoUiModel>, page: Int): List<VideoHorizontalItemModel> {
+    private fun getRecyclerItemsModels(
+        items: List<VideoUiModel>,
+        page: Int
+    ): List<VideoHorizontalItemModel> {
         val newItems = mutableListOf<VideoHorizontalItemModel>()
         items.forEachIndexed { index, videoUiModel ->
             if (videoUiModel.id != args.videoId) {
@@ -451,16 +469,18 @@ class PlayerFragment : MviBaseFragment<
                             thumbnail = thumbnail,
                             itemClickListener = object : ClickListener {
                                 override fun onClick() {
-                                    store.sendEffect(PlayerEffect.OpenAnotherVideo(
-                                        PlayerArguments(
-                                            videoId = videoUiModel.id,
-                                            videoPage = page,
-                                            title = title,
-                                            views = views,
-                                            thumbnail = thumbnail,
-                                            downloads = downloads
+                                    store.sendEffect(
+                                        PlayerEffect.OpenAnotherVideo(
+                                            PlayerArguments(
+                                                videoId = videoUiModel.id,
+                                                videoPage = page,
+                                                title = title,
+                                                views = views,
+                                                thumbnail = thumbnail,
+                                                downloads = downloads
+                                            )
                                         )
-                                    ))
+                                    )
                                 }
                             },
                             actionClickListener = object : ClickListener {
@@ -500,15 +520,9 @@ class PlayerFragment : MviBaseFragment<
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        checkScreenOrientation()
-    }
-
-    private fun checkScreenOrientation() {
-        val orientation = resources.configuration.orientation
-        if (orientation != previousOrientation) {
-            toggleFullscreen()
-            previousOrientation = orientation
-        }
+        if (newConfig.orientation == ActivityInfo.SCREEN_ORIENTATION_USER){
+            enterFullscreen()
+        } else exitFullscreen()
     }
 
     override fun onStop() {
