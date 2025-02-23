@@ -144,6 +144,14 @@ class PlayerFragment : MviBaseFragment<
                     args = this
                     store.sendIntent(PlayerIntent.GetVideoQuality(args.videoPage, args.videoId))
                     initMainItemData()
+                    for (i in recyclerItems){
+                        val index = recyclerItems.indexOf(i)
+                        if (i.videoId == args.videoId){
+                            recyclerItems.removeAt(index)
+                            adapter.notifyItemRemoved(index)
+                            break
+                        }
+                    }
                     customControllerBinding.videoTitlePlayer.text = title
                     customControllerBinding.buttonPlayAgain.visibility = GONE
                     customControllerBinding.buttonPlayPause.visibility = VISIBLE
@@ -415,7 +423,7 @@ class PlayerFragment : MviBaseFragment<
         val newItems = getRecyclerItemsModels(items, page)
         recyclerItems.addAll(newItems)
         binding.recyclerView.adapter = adapter
-        adapter.submitList(newItems)
+        adapter.submitList(recyclerItems)
     }
 
     private fun getRecyclerItemsModels(items: List<VideoUiModel>, page: Int): List<VideoHorizontalItemModel> {
