@@ -19,8 +19,10 @@ import android.view.WindowManager
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlaybackException
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -106,7 +108,6 @@ class PlayerFragment : MviBaseFragment<
         val appComponent = DaggerAppComponent.factory().create(requireContext())
         DaggerPlayerFragmentComponent.factory().create(appComponent).inject(this)
         super.onCreate(savedInstanceState)
-
         player = ExoPlayer.Builder(requireContext()).build()
         args = getIntentArguments()
 
@@ -326,9 +327,11 @@ class PlayerFragment : MviBaseFragment<
         val activity = requireActivity()
         if (!isFullscreen) {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+            customControllerBinding.videoTitlePlayer.visibility = VISIBLE
             enterFullscreen()
         } else {
             activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+            customControllerBinding.videoTitlePlayer.visibility = GONE
             exitFullscreen()
         }
         isFullscreen = !isFullscreen

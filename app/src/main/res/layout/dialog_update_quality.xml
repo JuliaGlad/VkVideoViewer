@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_grey"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/light_grey">
 
 
     <TextView
@@ -11,7 +11,7 @@
         style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="20dp"
         android:text="@string/tiny_quality"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,11 +23,11 @@
         style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="20dp"
         android:text="@string/small_quality"
         android:textColor="@color/white"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button_quality_tiny" />
 
 
@@ -36,13 +36,23 @@
         style="@style/TextAppearance.AppCompat.Small.Regular.VVV"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="20dp"
         android:text="@string/medium_quality"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/button_quality_small" />
 
-
+    <TextView
+        android:id="@+id/button_ok"
+        style="@style/TextAppearance.AppCompat.Small.Bold.VVV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:padding="20dp"
+        android:text="@string/ok"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_quality_medium" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

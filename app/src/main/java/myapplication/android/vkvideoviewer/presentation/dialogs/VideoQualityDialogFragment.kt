@@ -34,6 +34,7 @@ class VideoQualityDialogFragment: DialogFragment() {
                 quality = SMALL_ID
                 dismiss()
             }
+
         }
 
         return builder.setView(binding.root).create()

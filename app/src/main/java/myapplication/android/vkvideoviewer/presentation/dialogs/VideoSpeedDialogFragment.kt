@@ -38,6 +38,8 @@ class VideoSpeedDialogFragment: DialogFragment() {
                 speed = FASTEST_ID
                 dismiss()
             }
+
+            buttonOk.setOnClickListener { dismiss() }
         }
 
         return builder.setView(binding.root).create()
