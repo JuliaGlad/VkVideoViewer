@@ -70,7 +70,6 @@ class ImagesFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         if (viewModel.items.value.isEmpty()) {
             sendIntent()
         } else {
@@ -82,7 +81,6 @@ class ImagesFragment : MviBaseFragment<
         }
 
     }
-
 
     private fun sendIntent() {
         val categories = resources.getStringArray(R.array.image_categories)
@@ -106,7 +104,8 @@ class ImagesFragment : MviBaseFragment<
                         initRecycler(data)
                         addRefreshListener()
                         addScrollToEndListener()
-                    } else if (swipeRefreshLayout.isRefreshing) refreshRecycler(data)
+                    }
+                    else if (swipeRefreshLayout.isRefreshing) refreshRecycler(data)
                     else updateRecycler(data)
                     setVisibility(GONE, GONE)
                 }

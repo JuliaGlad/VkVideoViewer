@@ -63,7 +63,7 @@ class ImagesActor(
     private suspend fun getImagesByCategory(category: String, page: Int) =
         runCatchingNonCancellation {
             asyncAwait(
-                { getImagesByCategoryUseCase.invoke(category, page) }
+                { getImagesByCategoryUseCase.invoke(category.lowercase(), page) }
             ) { data ->
                 data.toUi()
             }
