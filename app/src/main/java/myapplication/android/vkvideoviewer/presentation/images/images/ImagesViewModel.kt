@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import myapplication.android.vkvideoviewer.presentation.images.images.recycler_view.ImageItemModel
 
 class ImagesViewModel : ViewModel() {
-
     private val _items: MutableStateFlow<MutableList<ImageItemModel>>
             = MutableStateFlow(mutableListOf())
     val items: StateFlow<List<ImageItemModel>> = _items.asStateFlow()

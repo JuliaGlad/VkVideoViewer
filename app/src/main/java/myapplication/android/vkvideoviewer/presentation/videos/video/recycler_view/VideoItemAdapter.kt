@@ -68,12 +68,11 @@ class VideoItemAdapter
 
                     })
                     .into(thumbnail)
-                setClickListeners(model.actionClickListener, model.itemClickListener)
+                setClickListeners(model.itemClickListener)
             }
         }
 
-        private fun setClickListeners(actionListener: ClickListener, itemListener: ClickListener) {
-            binding.downloadAction.setOnClickListener { actionListener.onClick() }
+        private fun setClickListeners(itemListener: ClickListener) {
             binding.item.setOnClickListener { itemListener.onClick() }
         }
     }

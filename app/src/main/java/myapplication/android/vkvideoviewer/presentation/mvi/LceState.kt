@@ -6,5 +6,5 @@ sealed interface LceState<out T> {
 
     data class Content<out T>(val data: T): LceState<T>
 
-    data class Error(val throwable: Throwable): LceState<Nothing>
+    class Error(val throwable: Throwable): LceState<Nothing>
 }

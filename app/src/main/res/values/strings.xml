@@ -19,6 +19,7 @@
     <string name="normal_speed" translatable="false">1x</string>
     <string name="faster_speed" translatable="false">1.5x</string>
     <string name="medium_fast_speed" translatable="false">2x</string>
+    <string name="nothing_found_for_this_query">Nothing found for this query</string>
     <string-array name="image_categories">
         <item>All</item>
         <item>Backgrounds</item>

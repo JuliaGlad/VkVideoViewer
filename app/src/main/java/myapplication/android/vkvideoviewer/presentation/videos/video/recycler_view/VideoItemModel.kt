@@ -10,6 +10,5 @@ data class VideoItemModel(
     val views: Int,
     val downloads: Int,
     val thumbnail: String,
-    val itemClickListener: ClickListener,
-    val actionClickListener: ClickListener
+    val itemClickListener: ClickListener
 )

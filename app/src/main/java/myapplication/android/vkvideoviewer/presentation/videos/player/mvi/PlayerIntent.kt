@@ -4,9 +4,9 @@ import myapplication.android.vkvideoviewer.presentation.mvi.MviIntent
 
 sealed interface PlayerIntent: MviIntent {
 
-    data class GetVideos(val videoPage: Int, val videoId: Int): PlayerIntent
+    class GetVideos(val videoPage: Int, val videoId: Int): PlayerIntent
 
-    data class GetVideoQuality(val videoPage: Int, val videoId: Int): PlayerIntent
+    class GetVideoQuality(val videoPage: Int, val videoId: Int): PlayerIntent
 
     data object GetNewVideos: PlayerIntent
 }

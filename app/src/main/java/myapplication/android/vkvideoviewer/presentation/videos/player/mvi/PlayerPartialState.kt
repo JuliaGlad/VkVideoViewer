@@ -9,11 +9,11 @@ sealed interface PlayerPartialState: MviPartialState{
 
     data object Loading: PlayerPartialState
 
-    data class Error(val throwable: Throwable): PlayerPartialState
+    class Error(val throwable: Throwable): PlayerPartialState
 
-    data class DataLoaded(val data: PlayerResult): PlayerPartialState
+    class DataLoaded(val data: PlayerResult): PlayerPartialState
 
-    data class VideoQualitiesLoaded(val qualities: VideoQualitiesUiList): PlayerPartialState
+    class VideoQualitiesLoaded(val qualities: VideoQualitiesUiList): PlayerPartialState
 
-    data class NewVideosLoaded(val videos: VideoUiList): PlayerPartialState
+    class NewVideosLoaded(val videos: VideoUiList): PlayerPartialState
 }

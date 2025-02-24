@@ -96,7 +96,7 @@ class PlayerFragment : MviBaseFragment<
 
     private val handler: Handler = Handler(Looper.getMainLooper())
     private var loading: Boolean = false
-    private var needUpdate: Boolean = false
+    private var needScrollUpdate: Boolean = false
     private var isFullscreen: Boolean = false
     private var currentQuality: String = MEDIUM_ID
     private var currentSpeed: Float = NORMAL_ID
@@ -178,7 +178,7 @@ class PlayerFragment : MviBaseFragment<
                     binding.errorLayout.buttonLoader.visibility = GONE
                     setLayoutVisibility(GONE, GONE)
                     if (!state.isNewVideo) {
-                        if (!needUpdate) {
+                        if (!needScrollUpdate) {
                             initButtonBack()
                             initRecycler(state.ui.data.videos.items, state.page)
                             initMainItemData()
@@ -444,7 +444,7 @@ class PlayerFragment : MviBaseFragment<
         viewModel.addItems(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
         loading = false
-        needUpdate = false
+        needScrollUpdate = false
     }
 
     private fun initRecycler(items: List<VideoUiModel>, page: Int) {
@@ -487,11 +487,6 @@ class PlayerFragment : MviBaseFragment<
                                         )
                                     )
                                 }
-                            },
-                            actionClickListener = object : ClickListener {
-                                override fun onClick() {
-                                    TODO("open menu to saving")
-                                }
                             }
                         )
                     )
@@ -510,12 +505,12 @@ class PlayerFragment : MviBaseFragment<
         with(binding.recyclerView) {
             binding.recyclerView.addOnScrollListener(object :
                 LinearPaginationScrollListener(layoutManager as LinearLayoutManager) {
-                override fun isLastPage(): Boolean = needUpdate
+                override fun isLastPage(): Boolean = needScrollUpdate
 
                 override fun isLoading(): Boolean = loading
 
                 override fun loadMoreItems() {
-                    needUpdate = true
+                    needScrollUpdate = true
                     loading = true
                     store.sendIntent(PlayerIntent.GetNewVideos)
                 }

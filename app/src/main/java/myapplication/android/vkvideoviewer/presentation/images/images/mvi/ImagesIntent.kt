@@ -8,5 +8,5 @@ sealed interface ImagesIntent: MviIntent {
 
     data object GetImages: ImagesIntent
 
-    data class GetImagesByCategory(val category: String): ImagesIntent
+    class GetImagesByCategory(val category: String): ImagesIntent
 }

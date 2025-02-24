@@ -6,12 +6,16 @@ import myapplication.android.vkvideoviewer.presentation.videos.model.VideoUiMode
 import myapplication.android.vkvideoviewer.presentation.videos.model.VideoUiList
 import java.util.stream.Collectors
 
-fun VideosDomainList.toUi() =
-    VideoUiList(
-        items.stream()
-            .map { it.toUi() }
-            .collect(Collectors.toList())
+fun VideosDomainList.toUi(): VideoUiList {
+    val mappedItems = items.stream()
+        .map { it.toUi() }
+        .collect(Collectors.toList())
+    return VideoUiList(
+        items = mappedItems,
+        savedItems = mappedItems,
+        isSearch = false
     )
+}
 
 fun VideoDomainModel.toUi() =
     VideoUiModel(

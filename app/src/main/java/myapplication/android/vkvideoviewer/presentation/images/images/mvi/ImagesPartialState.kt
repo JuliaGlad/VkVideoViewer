@@ -9,8 +9,8 @@ sealed interface ImagesPartialState: MviPartialState {
 
     data object Loading: ImagesPartialState
 
-    data class DataLoaded(val ui: ImageUiList): ImagesPartialState
+    class DataLoaded(val ui: ImageUiList): ImagesPartialState
 
-    data class Error(val throwable: Throwable): ImagesPartialState
+    class Error(val throwable: Throwable): ImagesPartialState
 
 }

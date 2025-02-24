@@ -4,7 +4,7 @@ import myapplication.android.vkvideoviewer.presentation.mvi.MviEffect
 
 sealed interface VideoEffect: MviEffect {
 
-    data class OpenVideoActivity(
+    class OpenVideoActivity(
         val videoId: Int,
         val page: Int,
         val title: String,
@@ -12,6 +12,4 @@ sealed interface VideoEffect: MviEffect {
         val views: Int,
         val downloads: Int
     ): VideoEffect
-
-    data class OpenDownloadingMenu(val url: String): VideoEffect
 }

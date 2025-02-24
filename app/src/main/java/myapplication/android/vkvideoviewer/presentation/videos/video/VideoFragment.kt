@@ -2,7 +2,6 @@ package myapplication.android.vkvideoviewer.presentation.videos.video
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -47,7 +46,7 @@ class VideoFragment : MviBaseFragment<
     private var _binding: FragmentVideoBinding? = null
     private val binding get() = _binding!!
     private val viewModel by viewModels<VideoViewModel>()
-    private var needUpdate: Boolean = false
+    private var needScrollUpdate: Boolean = false
     private var loading: Boolean = false
     override val store: MviStore<VideoPartialState, VideoIntent, VideoState, VideoEffect>
             by viewModels {
@@ -82,7 +81,7 @@ class VideoFragment : MviBaseFragment<
 
     override fun resolveEffect(effect: VideoEffect) {
         when (effect) {
-            is VideoEffect.OpenVideoActivity ->{
+            is VideoEffect.OpenVideoActivity -> {
                 with(effect) {
                     (activity as MainActivity).openPlayerActivity(
                         videoId = videoId,
@@ -94,7 +93,6 @@ class VideoFragment : MviBaseFragment<
                     )
                 }
             }
-            is VideoEffect.OpenDownloadingMenu -> TODO()
         }
     }
 
@@ -102,7 +100,7 @@ class VideoFragment : MviBaseFragment<
         with(binding) {
             when (state.ui) {
                 is LceState.Content -> {
-                    if (!needUpdate) {
+                    if (!needScrollUpdate) {
                         setLayoutsVisibility(GONE, GONE)
                         errorLayout.buttonLoader.visibility = GONE
                         initRecycler(state.ui.data.items, state.page)
@@ -112,12 +110,21 @@ class VideoFragment : MviBaseFragment<
                     } else if (binding.swipeRefreshLayout.isRefreshing) {
                         clearAndUpdateRecycler(state.ui.data.items, state.page)
                     } else {
-                        updateRecycler(state.ui.data.items, state.page)
+                        if (state.ui.data.isSearch){
+                            val items = state.ui.data.items
+                            if (items.isNotEmpty()) {
+                                emptyLayout.root.visibility = GONE
+                                clearAndUpdateRecycler(state.ui.data.items, state.page)
+                            } else {
+                                emptyLayout.root.visibility = VISIBLE
+                            }
+                        }else {
+                            updateRecycler(state.ui.data.items, state.page)
+                        }
                     }
                 }
 
                 is LceState.Error -> {
-                    Log.e("Error Video", state.ui.throwable.message.toString())
                     setLayoutsVisibility(GONE, VISIBLE)
                     errorLayout.button.setOnClickListener {
                         store.sendIntent(VideoIntent.GetVideos)
@@ -141,7 +148,7 @@ class VideoFragment : MviBaseFragment<
         viewModel.addItems(newItems)
         adapter.notifyDataSetChanged()
         binding.swipeRefreshLayout.isRefreshing = false
-        needUpdate = false
+        needScrollUpdate = false
         loading = false
     }
 
@@ -151,7 +158,7 @@ class VideoFragment : MviBaseFragment<
         recyclerItems.addAll(newItems)
         viewModel.addItems(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
-        needUpdate = false
+        needScrollUpdate = false
         loading = false
     }
 
@@ -159,12 +166,12 @@ class VideoFragment : MviBaseFragment<
         with(binding.recyclerView) {
             binding.recyclerView.addOnScrollListener(object :
                 LinearPaginationScrollListener(layoutManager as LinearLayoutManager) {
-                override fun isLastPage(): Boolean = needUpdate
+                override fun isLastPage(): Boolean = needScrollUpdate
 
                 override fun isLoading(): Boolean = loading
 
                 override fun loadMoreItems() {
-                    needUpdate = true
+                    needScrollUpdate = true
                     loading = true
                     val query = binding.searchEditText.text.toString()
                     if (query.isEmpty()) store.sendIntent(VideoIntent.GetVideos)
@@ -177,7 +184,7 @@ class VideoFragment : MviBaseFragment<
     private fun addRefreshListener() {
         with(binding) {
             binding.swipeRefreshLayout.setOnRefreshListener {
-                needUpdate = true
+                needScrollUpdate = true
                 loading = true
                 if (searchEditText.text?.isEmpty() == true) store.sendIntent(VideoIntent.GetVideos)
                 else store.sendIntent(VideoIntent.GetVideosByQuery(searchEditText.text.toString()))
@@ -188,11 +195,8 @@ class VideoFragment : MviBaseFragment<
     private fun addSearchListener() {
         binding.searchEditText.addTextChangedListener {
             val query = binding.searchEditText.text.toString()
-            store.sendIntent(VideoIntent.Init)
-            recyclerItems.clear()
-            adapter.notifyDataSetChanged()
-            if (query.isNotEmpty())store.sendIntent(VideoIntent.GetVideosByQuery(query))
-            else store.sendIntent(VideoIntent.GetVideos)
+            needScrollUpdate = true
+            store.sendIntent(VideoIntent.GetVideosByQuery(query))
         }
     }
 
@@ -229,11 +233,6 @@ class VideoFragment : MviBaseFragment<
                                         downloads = downloads
                                     )
                                 )
-                            }
-                        },
-                        actionClickListener = object : ClickListener {
-                            override fun onClick() {
-                                TODO("open menu to downloading")
                             }
                         }
                     )

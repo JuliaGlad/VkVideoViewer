@@ -45,7 +45,7 @@ class ImageItemAdapter
                 binding.loader.root.visibility = VISIBLE
 
                 setImageUri(model)
-                setClickListeners(model.actionClickListener, model.itemClickListener)
+                setClickListeners(model.itemClickListener)
             }
         }
 
@@ -86,8 +86,7 @@ class ImageItemAdapter
                 .into(thumbnail)
         }
 
-        private fun setClickListeners(actionListener: ClickListener, itemListener: ClickListener) {
-            binding.saveAction.setOnClickListener { actionListener.onClick() }
+        private fun setClickListeners(itemListener: ClickListener) {
             binding.item.setOnClickListener { itemListener.onClick() }
         }
     }

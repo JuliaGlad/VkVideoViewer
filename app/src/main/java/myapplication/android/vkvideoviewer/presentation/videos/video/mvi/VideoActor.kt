@@ -24,25 +24,30 @@ class VideoActor(
     ): Flow<VideoPartialState> =
         when (intent) {
             VideoIntent.GetVideos -> loadVideos(state.page + 1)
-            is VideoIntent.GetVideosByQuery -> loadVideosByQuery(intent.query, state.page + 1)
+            is VideoIntent.GetVideosByQuery -> loadVideosByQuery(intent.query)
             VideoIntent.Init -> init()
         }
 
     private fun init() = flow { emit(VideoPartialState.Init) }
 
-    private fun loadVideosByQuery(query: String, page: Int) =
+    private fun loadVideosByQuery(query: String) =
         flow {
-            kotlin.runCatching {
-                getVideosByQuery(query, page)
-            }.fold(
-                onSuccess = { data ->
-                    emit(VideoPartialState.DataLoaded(data))
-                },
-                onFailure = { throwable ->
-                    emit(VideoPartialState.Error(throwable))
-                }
-            )
+            emit(VideoPartialState.DataByQueryLoaded(query))
         }
+
+//    private fun loadVideosByQuery(query: String, page: Int) =
+//        flow {
+//            kotlin.runCatching {
+//                getVideosByQuery(query, page)
+//            }.fold(
+//                onSuccess = { data ->
+//                    emit(VideoPartialState.DataLoaded(data))
+//                },
+//                onFailure = { throwable ->
+//                    emit(VideoPartialState.Error(throwable))
+//                }
+//            )
+//        }
 
     private fun loadVideos(page: Int) =
         flow {
@@ -50,7 +55,8 @@ class VideoActor(
                 getVideos(page)
             }.fold(
                 onSuccess = { data ->
-                    emit(VideoPartialState.DataLoaded(data))
+                    emit(VideoPartialState.DataLoaded(
+                        ui = data))
                 },
                 onFailure = { throwable ->
                     emit(VideoPartialState.Error(throwable))
@@ -58,14 +64,14 @@ class VideoActor(
             )
         }
 
-    private suspend fun getVideosByQuery(query: String, page: Int) =
-        runCatchingNonCancellation {
-            asyncAwait(
-                { getVideosByQueryUseCase.invoke(query, page) }
-            ){ data ->
-                data.toUi()
-            }
-        }.getOrThrow()
+//    private suspend fun getVideosByQuery(query: String, page: Int) =
+//        runCatchingNonCancellation {
+//            asyncAwait(
+//                { getVideosByQueryUseCase.invoke(query, page) }
+//            ){ data ->
+//                data.toUi()
+//            }
+//        }.getOrThrow()
 
     private suspend fun getVideos(page: Int) =
         runCatchingNonCancellation {

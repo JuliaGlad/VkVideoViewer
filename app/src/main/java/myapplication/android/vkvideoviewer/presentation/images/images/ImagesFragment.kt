@@ -44,7 +44,7 @@ class ImagesFragment : MviBaseFragment<
 
     private val viewModel: ImagesViewModel by viewModels<ImagesViewModel>()
     private val recyclerItems = mutableListOf<ImageItemModel>()
-    private var needUpdate: Boolean = false
+    private var needScrollUpdate: Boolean = false
     private var loading: Boolean = false
 
     @Inject
@@ -70,14 +70,19 @@ class ImagesFragment : MviBaseFragment<
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         if (viewModel.items.value.isEmpty()) {
             sendIntent()
         } else {
             viewModel.addItems(viewModel.items.value)
-            binding.recyclerView.adapter = adapter
-            adapter.submitList(recyclerItems)
+            if (viewModel.items.value.isNotEmpty()) {
+                binding.recyclerView.adapter = adapter
+                adapter.submitList(recyclerItems)
+            }
         }
+
     }
+
 
     private fun sendIntent() {
         val categories = resources.getStringArray(R.array.image_categories)
@@ -97,7 +102,7 @@ class ImagesFragment : MviBaseFragment<
             when (state.ui) {
                 is LceState.Content -> {
                     val data = state.ui.data.items
-                    if (!needUpdate) {
+                    if (!needScrollUpdate) {
                         initRecycler(data)
                         addRefreshListener()
                         addScrollToEndListener()
@@ -124,12 +129,12 @@ class ImagesFragment : MviBaseFragment<
         with(binding.recyclerView) {
             binding.recyclerView.addOnScrollListener(object :
                 LinearPaginationScrollListener(layoutManager as LinearLayoutManager) {
-                override fun isLastPage(): Boolean = needUpdate
+                override fun isLastPage(): Boolean = needScrollUpdate
 
                 override fun isLoading(): Boolean = loading
 
                 override fun loadMoreItems() {
-                    needUpdate = true
+                    needScrollUpdate = true
                     loading = true
                     sendIntent()
                 }
@@ -139,7 +144,7 @@ class ImagesFragment : MviBaseFragment<
 
     private fun addRefreshListener() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            needUpdate = true
+            needScrollUpdate = true
             loading = true
             sendIntent()
         }
@@ -151,7 +156,7 @@ class ImagesFragment : MviBaseFragment<
         recyclerItems.addAll(newItems)
         viewModel.addItems(newItems)
         adapter.notifyItemRangeInserted(startPosition, newItems.size)
-        needUpdate = false
+        needScrollUpdate = false
         loading = false
     }
 
@@ -164,7 +169,7 @@ class ImagesFragment : MviBaseFragment<
         viewModel.addItems(newItems)
         adapter.notifyDataSetChanged()
         binding.swipeRefreshLayout.isRefreshing = false
-        needUpdate = false
+        needScrollUpdate = false
         loading = false
     }
 
@@ -188,16 +193,11 @@ class ImagesFragment : MviBaseFragment<
                         views = views,
                         downloads = downloads,
                         thumbnail = previewUrl,
-                        object : ClickListener {
+                        itemClickListener = object : ClickListener {
                             override fun onClick() {
                                 store.sendEffect(ImagesEffect.OpenFullScreenImage(largeImageUrl))
                             }
                         },
-                        object : ClickListener {
-                            override fun onClick() {
-                                TODO("Add to saved")
-                            }
-                        }
                     )
                 )
             }

@@ -8,5 +8,5 @@ sealed interface VideoIntent: MviIntent {
 
     data object GetVideos: VideoIntent
 
-    data class GetVideosByQuery(val query: String): VideoIntent
+    class GetVideosByQuery(val query: String): VideoIntent
 }

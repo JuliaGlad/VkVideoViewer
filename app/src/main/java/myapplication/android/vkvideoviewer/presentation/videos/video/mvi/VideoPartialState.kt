@@ -9,7 +9,9 @@ sealed interface VideoPartialState: MviPartialState {
 
     data object Loading: VideoPartialState
 
-    data class DataLoaded(val ui: VideoUiList): VideoPartialState
+    class DataLoaded(val ui: VideoUiList): VideoPartialState
 
-    data class Error(val throwable: Throwable): VideoPartialState
+    class DataByQueryLoaded(val query: String): VideoPartialState
+
+    class Error(val throwable: Throwable): VideoPartialState
 }

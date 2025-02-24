@@ -4,7 +4,7 @@ import myapplication.android.vkvideoviewer.presentation.mvi.MviEffect
 
 sealed interface ImagesEffect: MviEffect{
 
-    data class OpenFullScreenImage(
+    class OpenFullScreenImage(
         val url: String
     ): ImagesEffect
 

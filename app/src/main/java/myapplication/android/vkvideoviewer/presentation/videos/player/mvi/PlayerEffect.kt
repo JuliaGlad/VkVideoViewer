@@ -7,7 +7,7 @@ sealed interface PlayerEffect: MviEffect {
 
     data object FinishActivity: PlayerEffect
 
-    data class OpenAnotherVideo(
+    class OpenAnotherVideo(
         val playerArguments: PlayerArguments
     ): PlayerEffect
 }

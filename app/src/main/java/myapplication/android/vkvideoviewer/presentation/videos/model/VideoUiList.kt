@@ -1,10 +1,12 @@
 package myapplication.android.vkvideoviewer.presentation.videos.model
 
-class VideoUiList(
-    val items: List<VideoUiModel>
+data class VideoUiList(
+    val items: List<VideoUiModel>,
+    val savedItems: List<VideoUiModel>,
+    val isSearch: Boolean = false
 )
 
-class VideoUiModel(
+data class VideoUiModel(
     val id: Int,
     val title: String,
     val duration: Int,
